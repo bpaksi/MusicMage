@@ -1,11 +1,12 @@
 import { EventEmitter } from "events";
 import dispatcher from "../dispatcher";
-
+import * as ArtistActions from '../actions/artist'
 
 class ArtistStore extends EventEmitter {
   constructor() {
     super();
 
+    this.isActive = false
     this.artists = []
   }
 
@@ -14,23 +15,27 @@ class ArtistStore extends EventEmitter {
   }
 
   getAll() {
+    if (this.isActive === false) {
+      this.isActive = true;
+
+      ArtistActions.ArtistSubscribe()
+    }
+
     return this.artists;
   }
 
   getByArtist(artist) {
-    return this.artists.filter( (a) => {
+    return this.getAll().filter((a) => {
       return a.artist === artist;
-    } )
+    })
   }
 
   handleActions(action) {
     // console.log("ArtistStore action called", action);
 
     switch (action.name) {
-      case "artist all":    
+      case "artist all":
       case "artist add":
-        console.log("artist add");
-
         this.artists.push(action.data)
         this.emit("change");
 
@@ -43,14 +48,7 @@ class ArtistStore extends EventEmitter {
         console.log("artist change");
         break;
 
-        case "artist unsubscribe":
-        console.log("artists unsubscribe");
-
-        this.artists = []
-        this.emit("change");
-        
-        break;
-        default:
+      default:
     }
   }
 }

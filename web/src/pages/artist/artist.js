@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ArtistStore from '../../stores/artistStore'
-import * as ArtistActions from '../../actions/artist'
+// import * as ArtistActions from '../../actions/artist'
 import ArtistRow from './artistRow'
 
 class Artist extends Component {
@@ -16,20 +16,11 @@ class Artist extends Component {
   }
 
   componentWillMount() {
-    ArtistActions.ArtistSubscribe()
-
-    ArtistStore.on("change", () => {
-      console.log("page artist: change handler")
-
+     ArtistStore.on("change", () => {
       this.setState({
         artists: ArtistStore.getByArtist(this.artist)
       })
     });
-  }
-
-  componentWillUnmount() {
-    ArtistActions.ArtistUnsubscribe()
-    ArtistStore.removeListener("change")
   }
 
   render() {
@@ -48,7 +39,7 @@ class Artist extends Component {
           </thead>
           <tbody>
             {artists.map(function (artist) {
-              return <ArtistRow artist={artist} />;
+              return <ArtistRow key={artist.id} artist={artist} />;
             })}            
           </tbody>
         </table>

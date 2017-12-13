@@ -16,8 +16,7 @@ class Socket extends EventEmitter {
     try {
       const message = JSON.parse(e.data);
 
-      console.log("socket received data", message)
-      
+      //  console.log("socket received data", message)
       GenericActions.Raw(message.name, message.data);
     }
     catch (err) {
@@ -33,34 +32,25 @@ class Socket extends EventEmitter {
   }
 
   handleActions(action) {
-    // console.log("Socket action called", action);
-    
-    switch (action.name) {
-      case "artist subscribe":
+    const validNames = [
+      "artist subscribe",
+      "artist unsubscribe",
+      "song update",
+      "song delete",
+      "file move",
+    ]
 
-      sendMessage(this.ws, action)
+    if (validNames.indexOf(action.name) !== -1) {
+      waitForSocketConnection(this.ws, () => {
+        // console.log("sending message: " + action.name)
 
-        break;
-        case "artist unsubscribe":
-          sendMessage(this.ws, action)
-
-        break;
-        default:
+        this.ws.send(JSON.stringify(action));
+      });
     }
   }
 }
 
-function sendMessage(socket, msg){
-  console.log("socket.send:" + msg.name)
-  
-  // Wait until the state of the socket is not ready and send the message when it is...
-  waitForSocketConnection(socket, function(){
-      console.log("sending message: " + msg.name)
-      socket.send(JSON.stringify(msg));
-  });
-}
-
-function waitForSocketConnection(socket, callback){
+function waitForSocketConnection(socket, callback) {
   if (socket.readyState === 1) {
     callback();
     return;
@@ -69,9 +59,10 @@ function waitForSocketConnection(socket, callback){
   setTimeout(
     function () {
       if (socket.readyState === 1) {
-          callback();
-          return;
-      } 
+        callback();
+        return;
+      }
+
       waitForSocketConnection(socket, callback);
     }, 5); // wait 5 milisecond for the connection...
 }

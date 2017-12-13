@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom'
 class Artist extends Component {
   render() {
     const {artist} = this.props
-console.log(artist)
+
     return (
       <tr>
         <td><NavLink to={"artist/" + artist.artist}>{artist.artist}</NavLink></td>

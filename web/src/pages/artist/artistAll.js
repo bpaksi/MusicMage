@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ArtistStore from '../../stores/artistStore'
-import * as ArtistActions from '../../actions/artist'
+// import * as ArtistActions from '../../actions/artist'
 import ArtistRow from './artistRow'
 
 class ArtistAll extends Component {
@@ -13,8 +13,6 @@ class ArtistAll extends Component {
   }
 
   componentWillMount() {
-    ArtistActions.ArtistSubscribe()
-
     ArtistStore.on("change", () => {
       console.log("page artist: change handler")
 
@@ -22,10 +20,6 @@ class ArtistAll extends Component {
         artists: ArtistStore.getAll()
       })
     });
-  }
-
-  componentWillUnmount() {
-    ArtistActions.ArtistUnsubscribe()
   }
 
   render() {
@@ -44,7 +38,7 @@ class ArtistAll extends Component {
           </thead>
           <tbody>
             {artists.map(function (artist) {
-              return <ArtistRow artist={artist} />;
+              return <ArtistRow key={artist.id} artist={artist} />;
             })}            
           </tbody>
         </table>

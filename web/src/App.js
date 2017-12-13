@@ -6,6 +6,8 @@ import {
     Switch
 } from 'react-router-dom'
 
+import './stores/socket'
+
 import Home from './pages/home/home'
 import About from './pages/about/about'
 import ArtistAll from './pages/artist/artistAll'
@@ -13,26 +15,19 @@ import Artist from './pages/artist/artist'
 import ArtistAlbum from './pages/artistAlbum/artistAlbum'
 import NotFound from './pages/notFound/notFound'
 
-import Socket from './stores/socket'
-
 import './index.css';
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            connected: false,
-        }
-    }
 
     componentWillMount() {
-        Socket.on('socket connect', this.onConnect.bind(this));
-        Socket.on('socket disconnect', this.onDisconnect.bind(this));
+        
+    }
+    componentDidMount() {
     }
 
     onConnect() {
         this.setState({ connected: true });
+   
     }
 
     onDisconnect() {
