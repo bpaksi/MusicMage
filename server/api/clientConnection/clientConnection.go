@@ -111,7 +111,7 @@ func (c *ClientConnection) readData(disconnected chan<- bool) {
 			return
 		}
 
-		log.Printf("ClientConnection.readData %#v", message)
+		// log.Printf("ClientConnection.readData %#v", message)
 
 		c.routeHandler(c, message)
 	}

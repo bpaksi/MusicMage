@@ -10,10 +10,6 @@ class ArtistStore extends EventEmitter {
     this.artists = []
   }
 
-  refresh() {
-    this.emit("change");
-  }
-
   getAll() {
     if (this.isActive === false) {
       this.isActive = true;
@@ -25,9 +21,15 @@ class ArtistStore extends EventEmitter {
   }
 
   getByArtist(artist) {
-    return this.getAll().filter((a) => {
-      return a.artist === artist;
-    })
+
+    if (artist) {
+      return this.getAll().filter((a) => {
+        return a.artist === artist;
+      })
+  
+    }
+
+    return this.getAll()
   }
 
   handleActions(action) {

@@ -4,23 +4,41 @@ import ArtistStore from '../../stores/artistStore'
 import ArtistRow from './artistRow'
 
 class Artist extends Component {
-  constructor(props) {
-    super(props);
 
-    const {params} = this.props.match
-    this.artist = params.artist
+  componentWillReceiveProps(nextProps) {
+    const {params} = nextProps.match
 
     this.state = {
-      artists: ArtistStore.getByArtist(this.artist)
-    }
+      artists: ArtistStore.getByArtist(params.artist)
+    }}
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return true
   }
 
   componentWillMount() {
-     ArtistStore.on("change", () => {
-      this.setState({
-        artists: ArtistStore.getByArtist(this.artist)
-      })
-    });
+    ArtistStore.on("change", this.onChange);
+
+
+    console.log("artist: add handler")    
+  }
+
+  componentWillUnmount() {
+    ArtistStore.removeListener("change", this.onChange);
+  
+ 
+    console.log("artist: remove handler")
+   }
+
+  onChange = () => {
+ 
+    const {params} = this.props.match
+    
+   console.log("artis: change handler: " +  params.artist)
+
+    this.setState({
+      artists: ArtistStore.getByArtist(params.artist)
+    })
   }
 
   render() {

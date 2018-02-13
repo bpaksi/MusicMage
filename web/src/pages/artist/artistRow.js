@@ -7,8 +7,8 @@ class Artist extends Component {
 
     return (
       <tr>
-        <td><NavLink to={"artist/" + artist.artist}>{artist.artist}</NavLink></td>
-        <td><NavLink to={"artist/" + artist.artist + "/" + artist.album}>{artist.album}</NavLink></td>
+        <td><NavLink to={"/artist/" + artist.artist}>{artist.artist}</NavLink></td>
+        <td><NavLink to={"/artist/" + artist.artist + "/" + artist.album}>{artist.album}</NavLink></td>
         <td>{artist.songCount}</td>
       </tr>
     );

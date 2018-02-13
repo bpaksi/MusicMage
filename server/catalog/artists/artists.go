@@ -34,10 +34,10 @@ func NewArtistDatabase(songs *songs.Songs) *Artists {
 	artists.changeHandlerKeyGenerator = tools.NewIdentityGenerator()
 	artists.changeHandlers = make([]registeredChangeHander, 0)
 
-	songs.OnAdd(artists.onAddHandler)
-	songs.OnDelete(artists.onDeleteHandler)
-	songs.OnChange(artists.onChangeHandler)
-	songs.OnClose(artists.onCloseHandler)
+	songs.OnAdd(artists.onAddSongHandler)
+	songs.OnDelete(artists.onDeleteSongHandler)
+	songs.OnChange(artists.onChangeSongHandler)
+	songs.OnClose(artists.onCloseSongsHandler)
 
 	return artists
 }
@@ -63,7 +63,7 @@ func (artists *Artists) RemoveChangeHandler(key int64) {
 	}
 }
 
-func (artists *Artists) onAddHandler(song songs.Song) {
+func (artists *Artists) onAddSongHandler(song songs.Song) {
 	artists.Lock()
 	defer artists.Unlock()
 
@@ -92,7 +92,7 @@ func (artists *Artists) onAddHandler(song songs.Song) {
 	}
 }
 
-func (artists *Artists) onDeleteHandler(song songs.Song) {
+func (artists *Artists) onDeleteSongHandler(song songs.Song) {
 	artists.Lock()
 	defer artists.Unlock()
 
@@ -116,12 +116,12 @@ func (artists *Artists) onDeleteHandler(song songs.Song) {
 	}
 }
 
-func (artists *Artists) onChangeHandler(old, new songs.Song) {
+func (artists *Artists) onChangeSongHandler(old, new songs.Song) {
 	artists.onAddHandler(new)
 	artists.onDeleteHandler(old)
 }
 
-func (artists *Artists) onCloseHandler() {
+func (artists *Artists) onCloseSongsHandler() {
 	artists.Lock()
 	defer artists.Unlock()
 

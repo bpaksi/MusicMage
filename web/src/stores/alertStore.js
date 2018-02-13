@@ -18,9 +18,9 @@ class AlertStore extends EventEmitter {
     switch (action.name) {
 
       case "Error":
-        this.alerts.push({type: "Error", text: action.data})
-
-        default:
+        this.alerts.push({ type: "Error", text: action.data })
+        break;
+      default:
     }
   }
 }

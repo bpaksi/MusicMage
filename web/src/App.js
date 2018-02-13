@@ -6,13 +6,14 @@ import {
     Switch
 } from 'react-router-dom'
 
+import AlertStore from './stores/alertStore'
 import './stores/socket'
 
 import Home from './pages/home/home'
 import About from './pages/about/about'
-import ArtistAll from './pages/artist/artistAll'
+// import ArtistAll from './pages/artist/artistAll'
 import Artist from './pages/artist/artist'
-import ArtistAlbum from './pages/artistAlbum/artistAlbum'
+// import ArtistAlbum from './pages/artistAlbum/artistAlbum'
 import NotFound from './pages/notFound/notFound'
 
 import './index.css';
@@ -20,19 +21,10 @@ import './index.css';
 class App extends Component {
 
     componentWillMount() {
-        
-    }
-    componentDidMount() {
-    }
-
-    onConnect() {
-        this.setState({ connected: true });
-   
-    }
-
-    onDisconnect() {
-        this.setState({ connected: false });
-    }
+        AlertStore.on("change", () => {
+            // toast = AlertStore.pop()
+         })
+     } 
 
     render() {
         return (
@@ -60,9 +52,9 @@ class App extends Component {
                     <div className="container-fluid">
                         <Switch>
                             <Route exact path="/" component={Home} />
-                            <Route exact path="/artists" component={ArtistAll} />
+                            <Route exact path="/artists" component={Artist} />
                             <Route exact path="/artist/:artist" component={Artist} />
-                            <Route exact path="/artist/:artist/:album" component={ArtistAlbum} />
+                            <Route exact path="/artist/:artist/:album" component={Artist} />
                             <Route exact path="/about" component={About} />
                             <Route component={NotFound} />
                         </Switch>
@@ -72,5 +64,27 @@ class App extends Component {
         );
     }
 }
+
+// function test(toast) {
+//     toastr.options = {
+//         "closeButton": true,
+//         "debug": false,
+//         "newestOnTop": true,
+//         "progressBar": true,
+//         "positionClass": "toast-top-right",
+//         "preventDuplicates": false,
+//         "showDuration": "300",
+//         "hideDuration": "1000",
+//         "timeOut": 0,
+//         "extendedTimeOut": 0,
+//         "showEasing": "swing",
+//         "hideEasing": "linear",
+//         "showMethod": "fadeIn",
+//         "hideMethod": "fadeOut",
+//         "tapToDismiss": false
+//     }
+
+//     toastr[toast.type](toast.msg, toast.title);
+// }
 
 export default App

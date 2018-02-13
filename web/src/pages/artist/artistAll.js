@@ -13,13 +13,19 @@ class ArtistAll extends Component {
   }
 
   componentWillMount() {
-    ArtistStore.on("change", () => {
-      console.log("page artist: change handler")
+    ArtistStore.on("change", this.onChange);
+  }
 
-      this.setState({
-        artists: ArtistStore.getAll()
-      })
-    });
+  componentWillUnmount() {
+    ArtistStore.removeListener("change", this.onChange);
+  }
+
+  onChange = () => {
+    console.log("page artist: change handler")
+
+    this.setState({
+      artists: ArtistStore.getAll()
+    })
   }
 
   render() {
@@ -39,7 +45,7 @@ class ArtistAll extends Component {
           <tbody>
             {artists.map(function (artist) {
               return <ArtistRow key={artist.id} artist={artist} />;
-            })}            
+            })}
           </tbody>
         </table>
 
@@ -47,7 +53,6 @@ class ArtistAll extends Component {
     );
   }
 }
-
 
 export default ArtistAll;
 
