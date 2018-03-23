@@ -23,16 +23,17 @@ func NewIdentityGenerator() *IdentityGenerator {
 // Next ...
 func (id *IdentityGenerator) Next() int64 {
 	id.Lock()
+	defer id.Unlock()
+
 	nextID := id.nextID
 	id.nextID++
-	id.Unlock()
-
 	return nextID
 }
 
 // Reset ...
 func (id *IdentityGenerator) Reset() {
 	id.Lock()
+	defer id.Unlock()
+
 	id.nextID = startIndex
-	id.Unlock()
 }
