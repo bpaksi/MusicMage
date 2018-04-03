@@ -1,5 +1,9 @@
 package album
 
+import (
+	"github.com/bpaksi/MusicMage/server/api/connection"
+)
+
 const subscriptionName = "Album"
 
 // SongRecord ...
@@ -10,4 +14,9 @@ type SongRecord struct {
 	Title  string `json:"title"`
 	Genre  string `json:"genre"`
 	Year   string `json:"year"`
+}
+
+func init() {
+	connection.Router.Handle("ALBUM_SUBSCRIBE", OnSubscribe)
+	connection.Router.Handle("ALBUM_UNSUBSCRIBE", OnUnsubscribe)
 }

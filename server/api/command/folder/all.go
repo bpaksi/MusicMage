@@ -1,7 +1,6 @@
 package folder
 
 import (
-	"log"
 	"path"
 	"strings"
 
@@ -14,13 +13,15 @@ type Node struct {
 	Children []Node `json:"children,omitempty"`
 }
 
-// FetchAll ...
-func FetchAll(client *connection.Client, message connection.Message) {
+func init() {
+	connection.Router.Handle("FOLDERS_FETCH", all)
+}
+
+func all(client *connection.Client) {
 	folders := make([]string, 0)
 	root := client.Services.Database.RootFolder + "/"
 
 	for _, song := range client.Services.Database.Songs.Records {
-
 		dir, _ := path.Split(song.File.FullPath)
 		if strings.HasPrefix(dir, root) {
 			folder := strings.TrimPrefix(dir, root)
@@ -32,7 +33,7 @@ func FetchAll(client *connection.Client, message connection.Message) {
 		}
 	}
 
-	log.Printf("folders: %#v", folders)
+	// log.Printf("folders: %#v", folders)
 
 	var tree []Node
 	for i := range folders {

@@ -1,11 +1,13 @@
 package genre
 
-import (
-	"github.com/bpaksi/MusicMage/server/api/connection"
-)
+import "github.com/bpaksi/MusicMage/server/api/connection"
+
+func init() {
+	connection.Router.Handle("GENRES_FETCH", All)
+}
 
 // Fetch ...
-func Fetch(client *connection.Client, message connection.Message) {
+func All(client *connection.Client) {
 	genres := make([]string, 0)
 
 	for _, song := range client.Services.Database.Songs.Records {

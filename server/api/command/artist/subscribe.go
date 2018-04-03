@@ -8,14 +8,9 @@ import (
 )
 
 // OnSubscribe ...
-func OnSubscribe(client *connection.Client, message connection.Message) {
+func OnSubscribe(client *connection.Client, filter string) {
 	if client.Subscriptions.Contains(subscriptionName) {
 		return
-	}
-
-	filter := ""
-	if message.Payload != nil {
-		filter = message.Payload.(string)
 	}
 
 	// initialize client

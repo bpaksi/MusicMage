@@ -46,7 +46,6 @@ func (s *Subscriptions) Disconnect(name string) {
 			break
 		}
 	}
-
 }
 
 // DisconnectAll ...

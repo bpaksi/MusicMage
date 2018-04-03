@@ -7,30 +7,31 @@ import (
 	"github.com/bpaksi/MusicMage/server/services/database/songs"
 )
 
+type params struct {
+	Artist string `json:"artist"`
+	Album  string `json:"album"`
+}
+
 // OnSubscribe ...
-func OnSubscribe(client *connection.Client, message connection.Message) {
+func OnSubscribe(client *connection.Client, params params) {
 	if client.Subscriptions.Contains(subscriptionName) {
 		return
 	}
 
-	params := message.Payload.(map[string]interface{})
-	artist := params["artist"].(string)
-	album := params["album"].(string)
-
-	// log.Printf("parameters: %s, %s", artist, album)
+	log.Printf("parameters: %s, %s", params.Artist, params.Album)
 
 	// initialize client
 	for _, song := range client.Services.Database.Songs.Records {
-		filterWrite(client, "SONG_ADDED", song, artist, album)
+		filterWrite(client, "SONG_ADDED", song, params.Artist, params.Album)
 	}
 
 	handlerKey := client.Services.Database.Songs.AddChangeHandler(func(old, new *songs.Song) {
 		if old.ID == 0 {
-			filterWrite(client, "SONG_ADDED", new, artist, album)
+			filterWrite(client, "SONG_ADDED", new, params.Artist, params.Album)
 		} else if new.ID == 0 {
-			filterWrite(client, "SONG_DELETED", old, artist, album)
+			filterWrite(client, "SONG_DELETED", old, params.Artist, params.Album)
 		} else {
-			filterWrite(client, "SONG_UPDATED", new, artist, album)
+			filterWrite(client, "SONG_UPDATED", new, params.Artist, params.Album)
 		}
 	})
 

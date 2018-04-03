@@ -4,14 +4,25 @@ import (
 	"github.com/bpaksi/MusicMage/server/api/connection"
 )
 
-// ForTracks ...
-func ForTracks(client *connection.Client, message connection.Message) {
-	params := message.Payload.(map[string]interface{})
-	artist := safe("artist", params)
-	album := safe("album", params)
-	mbid := safe("mbid", params)
+type trackParams struct {
+	Artist     string `json:"artist"`
+	Album      string `json:"album"`
+	InternalID string `json:"internalId"`
+}
 
-	results, err := client.Services.Search.SearchForTracks(artist, album, mbid)
+func init() {
+
+	connection.Router.Handle("SEARCH_TRACKS", ForTracks)
+}
+
+// ForTracks ...
+func ForTracks(client *connection.Client, params trackParams) {
+	// params := message.Payload.(map[string]interface{})
+	// artist := safe("artist", params)
+	// album := safe("album", params)
+	// mbid := safe("mbid", params)
+
+	results, err := client.Services.Search.SearchForTracks(params.Artist, params.Album, params.InternalID)
 	if err != nil {
 		client.Error(err.Error())
 	}

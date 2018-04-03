@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/bpaksi/MusicMage/server/services"
@@ -14,15 +15,13 @@ type Client struct {
 	Subscriptions *Subscriptions
 	writeChannel  chan Message
 	socket        *websocket.Conn
-	routeHandler  RouteHandler
 	identity      *tools.IdentityGenerator
 }
 
 // StartClient ...
-func StartClient(socket *websocket.Conn, router RouteHandler, services services.Services) *Client {
+func StartClient(socket *websocket.Conn, services services.Services) *Client {
 	var client Client
 	client.socket = socket
-	client.routeHandler = router
 	client.Services = services
 
 	client.writeChannel = make(chan Message)
@@ -40,9 +39,15 @@ func StartClient(socket *websocket.Conn, router RouteHandler, services services.
 
 // Send ...
 func (client *Client) Send(command string, payload interface{}) {
+
+	raw, err := json.Marshal(payload)
+	if err != nil {
+		log.Println("Error: " + err.Error())
+	}
+
 	message := Message{
 		Type:    command,
-		Payload: payload,
+		Payload: raw,
 	}
 
 	client.writeChannel <- message
@@ -59,15 +64,15 @@ func (client *Client) readData(disconnected chan<- bool) {
 	for {
 		err := client.socket.ReadJSON(&message)
 		if err != nil {
-			// log.Println("Client.readData error: " + err.Error())
+			log.Println("Client.readData error: " + err.Error())
 
 			disconnected <- true
 			return
 		}
 
-		// log.Printf("Client.readData %#v", message)
+		// log.Printf("Client.readData %s", message.Type)
 
-		client.safeRoute(message)
+		client.route(message)
 	}
 }
 
@@ -85,15 +90,16 @@ func (client *Client) writeData(disconnected <-chan bool) {
 			return
 		}
 	}
-
 }
 
-func (client *Client) safeRoute(message Message) {
+func (client *Client) route(message Message) {
 	defer func() {
 		if r := recover(); r != nil {
 			client.Send("ERROR", r)
 		}
 	}()
 
-	client.routeHandler(client, message)
+	if err := Router.Route(client, message); err != nil {
+		log.Println(err.Error())
+	}
 }
