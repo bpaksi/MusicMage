@@ -10,7 +10,7 @@ import HomeIcon from 'react-material-icons/icons/action/home';
 import PersonIcon from 'react-material-icons/icons/social/person';
 import FolderIcon from 'react-material-icons/icons/file/folder';
 
-import MenuButton from './util/menuButton'
+import MenuButton from './util/menuButton2'
 import MenuItemLink from './util/menuItemLink'
 
 const styles = {

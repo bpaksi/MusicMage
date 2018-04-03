@@ -5,7 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import Home from './home/home'
 import Artists from './artists/artists'
 import Artist from './artists/artist'
-import Folders from './folders/folders'
+import ByFolder from './folders/byFolder'
 
 const styles = theme => ({
   route: {
@@ -22,7 +22,7 @@ const Routes = (props) => {
       <Route exact path="/" component={Home} />
       <Route path="/artist/:artist/:album" component={Artist} />
       <Route path="/artists" component={Artists} />
-      <Route path="/folders" component={Folders} />
+      <Route path="/folders" component={ByFolder} />
     </div>
   );
 }

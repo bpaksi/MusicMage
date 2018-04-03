@@ -22,8 +22,10 @@ class MenuButton extends React.Component {
     open: false,
   };
   
-  onMenuOpen = event => {
-    this.setState({ open: true });
+  onMenuToggle = event => {
+    const {open} = this.state;
+    
+    this.setState({ open: !open });
   };
 
   onMenuClose = () => {
@@ -36,7 +38,7 @@ class MenuButton extends React.Component {
     return (
       <Manager>
         <Target>
-          <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={this.onMenuOpen}>
+          <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={this.onMenuToggle}>
             {icon}
           </IconButton>
         </Target>

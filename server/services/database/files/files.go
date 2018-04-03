@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/bpaksi/MusicMage/server/database/watcher"
+	"github.com/bpaksi/MusicMage/server/services/database/watcher"
 )
 
 // AddHandler ...

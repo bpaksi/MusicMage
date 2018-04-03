@@ -5,24 +5,20 @@ import (
 )
 
 // Fetch ...
-func Fetch(client *connection.ClientConnection, message connection.Message) {
+func Fetch(client *connection.Client, message connection.Message) {
 	genres := make([]string, 0)
 
-	for _, song := range client.Database.Songs.Records {
+	for _, song := range client.Services.Database.Songs.Records {
 		genre := song.File.Genre()
-		if genre == "" {
-			continue
-		}
+		if genre != "" {
 
-		if !contains(genres, genre) {
-			genres = append(genres, genre)
-
-			client.Write(connection.Message{
-				Type:    "GENRE",
-				Payload: genre,
-			})
+			if !contains(genres, genre) {
+				genres = append(genres, genre)
+			}
 		}
 	}
+
+	client.Send("GENRES_FETCHED", genres)
 }
 
 func contains(s []string, e string) bool {

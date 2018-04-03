@@ -6,22 +6,24 @@ import (
 
 	"github.com/bpaksi/MusicMage/server/api/command/album"
 	"github.com/bpaksi/MusicMage/server/api/command/artist"
+	"github.com/bpaksi/MusicMage/server/api/command/folder"
 	"github.com/bpaksi/MusicMage/server/api/command/genre"
+	"github.com/bpaksi/MusicMage/server/api/command/search"
 	"github.com/bpaksi/MusicMage/server/api/command/song"
 	"github.com/bpaksi/MusicMage/server/api/connection"
-	"github.com/bpaksi/MusicMage/server/database"
+	"github.com/bpaksi/MusicMage/server/services"
 	"github.com/gorilla/websocket"
 )
 
 // API ...
 type API struct {
 	upgrader websocket.Upgrader
-	router   *connection.MessageRouter
-	database *database.Database
+	router   *connection.Router
+	services services.Services
 }
 
 // NewAPI ...
-func NewAPI(database *database.Database) *API {
+func NewAPI(services services.Services) *API {
 	var api API
 	api.upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
@@ -29,11 +31,10 @@ func NewAPI(database *database.Database) *API {
 		CheckOrigin:     func(r *http.Request) bool { return true },
 	}
 
-	api.router = connection.NewMessageRouter()
+	api.router = connection.NewRouter()
 	api.setupRoutes()
 
-	api.database = database
-
+	api.services = services
 	return &api
 }
 
@@ -47,7 +48,15 @@ func (api *API) setupRoutes() {
 	api.router.Handle("SONG_UPDATE", song.OnUpdate)
 	api.router.Handle("SONG_DELETE", song.OnDelete)
 
-	api.router.Handle("FETCH_GENRES", genre.Fetch)
+	api.router.Handle("GENRES_FETCH", genre.Fetch)
+
+	api.router.Handle("SEARCH_ALBUM", search.ForAlbums)
+	api.router.Handle("SEARCH_TRACKS", search.ForTracks)
+
+	api.router.Handle("FOLDERS_FETCH", folder.FetchAll)
+	api.router.Handle("FOLDER_FETCH", folder.FetchFolder)
+	api.router.Handle("FOLDER_UPDATE", folder.Update)
+
 }
 
 // ServeHTTP ...
@@ -59,6 +68,5 @@ func (api *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := connection.NewClient(api.database)
-	client.Start(socket, api.router.Route)
+	connection.StartClient(socket, api.router.Route, api.services)
 }

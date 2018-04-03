@@ -1,6 +1,6 @@
 package songs
 
-import "github.com/bpaksi/MusicMage/server/database/files"
+import "github.com/bpaksi/MusicMage/server/services/database/files"
 
 // Song ...
 type Song struct {

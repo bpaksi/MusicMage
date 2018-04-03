@@ -39,8 +39,8 @@ class App extends React.Component {
       <div>
         <CssBaseline />
         <div className={classes.root}>
-          <Grid container spacing={24}>
-            <Grid item xs>
+          <Grid container spacing={8}>
+            <Grid item xs={12}>
               <Banner />
               <Paper >
                 <Routes />

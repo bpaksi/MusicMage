@@ -1,5 +1,5 @@
-import { ActionTypes, NotifyStatuses } from './constants';
-import * as util from './util'
+import { ActionTypes, NotifyStatuses } from "./constants";
+import * as util from "./util";
 
 const defaultState = {
   id: 0,
@@ -7,54 +7,61 @@ const defaultState = {
   songs: [],
   genre: {
     loaded: false,
-    options: [],
+    options: []
+  },
+  folders: {
+    all: [],
+    files: [],
+    selected: 0
   },
   notify: {
     open: false,
     message: "",
-    status: NotifyStatuses.DEFAULT,
+    status: NotifyStatuses.DEFAULT
   },
   confirm: {
     open: false,
     title: "",
     body: "",
-    onConfirm: null,
+    onConfirm: null
   }
 };
 
-export default (state=defaultState, action) => {
+export default (state = defaultState, action) => {
   util.deepFreeze(state);
-  
+
   switch (action.type) {
     case ActionTypes.WEBSOCKET_CONNECTED: {
-      const notify = {...state.notify, 
+      const notify = {
+        ...state.notify,
         open: true,
         message: "Server connected",
-        status: NotifyStatuses.SUCCESS,
+        status: NotifyStatuses.SUCCESS
       };
 
-      return {...state, notify};
+      return { ...state, notify };
     }
 
     case ActionTypes.WEBSOCKET_DISCONNECTED: {
-      const notify = {...state.notify, 
+      const notify = {
+        ...state.notify,
         open: true,
         message: "Lost server connection!",
-        status: NotifyStatuses.ERROR,
+        status: NotifyStatuses.ERROR
       };
 
-      return {...state, notify};
+      return { ...state, notify };
     }
 
-    case ActionTypes.ARTIST_SUBSCRIBE: { 
-      return {...state, artists: []};
+    case ActionTypes.ARTIST_SUBSCRIBE: {
+      return { ...state, artists: [] };
     }
-    case ActionTypes.ARTIST_UNSUBSCRIBE: { 
-      return {...state, artists: []};
+    case ActionTypes.ARTIST_UNSUBSCRIBE: {
+      return { ...state, artists: [] };
     }
     case ActionTypes.ARTIST_ADDED: {
       const artists = [...state.artists, action.payload];
-      return {...state, artists};
+      return { ...state, artists };
     }
     case ActionTypes.ARTIST_UPDATED: {
       const id = action.payload.id;
@@ -67,7 +74,7 @@ export default (state=defaultState, action) => {
         ...state.artists.slice(index + 1)
       ];
 
-      return {...state, artists};
+      return { ...state, artists };
     }
     case ActionTypes.ARTIST_DELETED: {
       const id = action.payload.id;
@@ -79,19 +86,19 @@ export default (state=defaultState, action) => {
         ...state.artists.slice(index + 1)
       ];
 
-      return {...state, artists};
+      return { ...state, artists };
     }
 
-    case ActionTypes.ALBUM_SUBSCRIBE: { 
-      return {...state, songs: []};
+    case ActionTypes.ALBUM_SUBSCRIBE: {
+      return { ...state, songs: [] };
     }
-    case ActionTypes.ALBUM_UNSUBSCRIBE: { 
-      return {...state, songs: []};
+    case ActionTypes.ALBUM_UNSUBSCRIBE: {
+      return { ...state, songs: [] };
     }
 
     case ActionTypes.SONG_ADDED: {
       const songs = [...state.songs, action.payload];
-      return {...state, songs};
+      return { ...state, songs };
     }
     case ActionTypes.SONG_UPDATED: {
       const id = action.payload.id;
@@ -105,7 +112,7 @@ export default (state=defaultState, action) => {
         ...state.songs.slice(index + 1)
       ];
 
-      return {...state, songs};
+      return { ...state, songs };
     }
     case ActionTypes.SONG_DELETED: {
       const id = action.payload.id;
@@ -118,57 +125,96 @@ export default (state=defaultState, action) => {
         ...state.songs.slice(index + 1)
       ];
 
-      const confirm = {...state.confirm, open: false};
-      return {...state, songs, confirm};
+      const confirm = { ...state.confirm, open: false };
+      return { ...state, songs, confirm };
     }
-    case ActionTypes.SONG_UPDATE_ERR: {
+    case ActionTypes.ERROR: {
       const error = action.payload;
-      const notify = {...state.notify, 
+      const notify = {
+        ...state.notify,
         open: true,
         message: "Update error: " + error,
-        status: NotifyStatuses.ERROR,
+        status: NotifyStatuses.ERROR
       };
 
-      const confirm = {...state.confirm, open: false};
-      return {...state, confirm, notify};
+      const confirm = { ...state.confirm, open: false };
+      return { ...state, confirm, notify };
     }
 
-    case ActionTypes.FETCH_GENRES: {
-      const genre = {...state.genre, loaded: true, options: []};
-      return {...state, genre};
+    case ActionTypes.GENRES_FETCH: {
+      const genre = { ...state.genre, loaded: true, options: [] };
+      return { ...state, genre };
     }
 
-    case ActionTypes.GENRE: {
-      const genre = {...state.genre};
+    case ActionTypes.GENRES_FETCHED: {
+      const genre = { ...state.genre };
 
-      genre.options = [...genre.options, action.payload];
-      return {...state, genre};
+      genre.options = action.payload;
+      return { ...state, genre };
     }
 
     case ActionTypes.NOTIFY_CLOSE: {
-      const notify = {...state.notify, open: false};
-      
-      return {...state, notify};
+      const notify = { ...state.notify, open: false };
+
+      return { ...state, notify };
     }
 
     case ActionTypes.CONFIRM: {
-      const confirm = {...state.confirm, 
+      const confirm = {
+        ...state.confirm,
         open: true,
         title: action.payload.title,
         body: action.payload.body,
-        onConfirm: action.payload.onConfirm,
+        onConfirm: action.payload.onConfirm
       };
-      
-      return {...state, confirm};
+
+      return { ...state, confirm };
     }
     case ActionTypes.CONFIRM_CLOSE: {
-      const confirm = {...state.confirm, open: false};
-      
-      return {...state, confirm};
+      const confirm = { ...state.confirm, open: false };
+
+      return { ...state, confirm };
     }
+
+    case ActionTypes.FOLDERS_FETCHED: {
+      const folders = { ...state.folders, selected: 0};
+      folders.all = action.payload;
+      decorateFolders(folders.all);
+
+      return { ...state, folders };
+    }
+
+    case ActionTypes.FOLDER_SELECT: {
+      const folders = { ...state.folders, selected: action.payload, files: [] };
+
+      return { ...state, folders };
+    }
+
+    case ActionTypes.FOLDER_FETCHED: {
+      const folders = { ...state.folders, files: action.payload };
+
+      return { ...state, folders };
+    }
+    
+    
 
     default: {
       return state;
     }
   }
+};
+
+function decorateFolders(folders) {
+  var id = 0;
+  const f = flds => {
+    if (flds) {
+      flds.forEach(fld => {
+        fld._id = ++id;
+        f(fld.children);
+      });
+    }
+  };
+
+  f(folders);
+  return id;
 }

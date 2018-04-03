@@ -29,7 +29,7 @@ const styles = theme => ({
   },
 });
 
- class Artists extends React.Component {
+class Artists extends React.Component {
   componentDidMount() {
     this.props.actions.artistSubscribe();
   }
@@ -38,35 +38,35 @@ const styles = theme => ({
   }
 
   onSelectArtist = (artist) => {
-    const {history} = this.props;
+    const { history } = this.props;
 
     const url = "/artist/" + artist.name + "/" + artist.albumName
     history.push(url);
   }
 
   render() {
-    const {classes, artists} = this.props;
+    const { classes, artists } = this.props;
 
     return (
-    <div className={classes.root}>
-      <GridList cellHeight="auto" className={classes.gridList} cols={4}>
-        {artists.map(artist => (
-          <GridListTile key={artist.id} onDoubleClick={() => this.onSelectArtist(artist)}>
-            <img src="http://localhost:4000/images/default_artist.jpg" alt="blah"/>
-            <GridListTileBar
-              title={artist.name}
-              subtitle={artist.albumName}
-              actionIcon={
-                <IconButton className={classes.icon} onClick={() => this.onSelectArtist(artist)}>
-                  <InfoIcon />
-                </IconButton>
-              }
-            />            
-          </GridListTile>
-        ))}
-      </GridList>
-    </div>
-    );  
+      <div className={classes.root}>
+        <GridList cellHeight="auto" className={classes.gridList} cols={4}>
+          {artists.map(artist => (
+            <GridListTile key={artist.id} onDoubleClick={() => this.onSelectArtist(artist)}>
+              <img src="http://localhost:4000/images/default_artist.jpg" alt="blah" />
+              <GridListTileBar
+                title={artist.name}
+                subtitle={artist.albumName}
+                actionIcon={
+                  <IconButton className={classes.icon} onClick={() => this.onSelectArtist(artist)}>
+                    <InfoIcon />
+                  </IconButton>
+                }
+              />
+            </GridListTile>
+          ))}
+        </GridList>
+      </div>
+    );
   }
 }
 
@@ -75,9 +75,9 @@ const mapStateToProps = (state) => {
     artists: state.artists,
   }
 }
- 
+
 const mapDispatchToProps = (dispatch) => {
-  return {actions: bindActionCreators( actions, dispatch) };
+  return { actions: bindActionCreators(actions, dispatch) };
 };
 
 

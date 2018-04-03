@@ -17,8 +17,8 @@ import Table, {
 import IconButton from 'material-ui/IconButton';
 import CloudIcon from 'material-ui-icons/Cloud';
 import Tooltip from 'material-ui/Tooltip';
-import GridField from './gridField';
-import Genre from './genre'
+import GridField from '../util/gridField';
+import Genre from '../util/genre'
 
 import * as actions from '../../state/actions'
 
@@ -82,7 +82,7 @@ class Artist extends React.Component {
 
 
   test = () => {
-    this.props.actions.confirmSongDelete(-1, "test artist", "test album");
+    this.props.actions.searchForAlbums("Thousand Foot Krutch")
   }
 
   render() {
@@ -90,14 +90,20 @@ class Artist extends React.Component {
 
     return (
       <Card className={classes.card}>
-        <CardHeader
-          title={this.props.match.params.artist}
-          subheader={this.props.match.params.album}
-        />
         <CardMedia className={classes.media}
             image="http://localhost:4000/images/default_album.jpg"
             title="Artist"
           />
+        <CardHeader
+          title={this.props.match.params.artist}
+          subheader={this.props.match.params.album}
+          action={
+            <IconButton>
+              <CloudIcon />
+            </IconButton>
+          }
+        />
+
         <CardContent>
           <Table>
             <TableHead className={classes.header}>

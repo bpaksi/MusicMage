@@ -4,12 +4,12 @@ import (
 	"log"
 
 	"github.com/bpaksi/MusicMage/server/api/connection"
-	"github.com/bpaksi/MusicMage/server/database/songs"
+	"github.com/bpaksi/MusicMage/server/services/database/songs"
 )
 
 // OnSubscribe ...
-func OnSubscribe(client *connection.ClientConnection, message connection.Message) {
-	if client.ContainsSubscription(subscriptionName) {
+func OnSubscribe(client *connection.Client, message connection.Message) {
+	if client.Subscriptions.Contains(subscriptionName) {
 		return
 	}
 
@@ -20,11 +20,11 @@ func OnSubscribe(client *connection.ClientConnection, message connection.Message
 	// log.Printf("parameters: %s, %s", artist, album)
 
 	// initialize client
-	for _, song := range client.Database.Songs.Records {
+	for _, song := range client.Services.Database.Songs.Records {
 		filterWrite(client, "SONG_ADDED", song, artist, album)
 	}
 
-	handlerKey := client.Database.Songs.AddChangeHandler(func(old, new *songs.Song) {
+	handlerKey := client.Services.Database.Songs.AddChangeHandler(func(old, new *songs.Song) {
 		if old.ID == 0 {
 			filterWrite(client, "SONG_ADDED", new, artist, album)
 		} else if new.ID == 0 {
@@ -34,14 +34,14 @@ func OnSubscribe(client *connection.ClientConnection, message connection.Message
 		}
 	})
 
-	client.TrackSubscription(subscriptionName, func() {
+	client.Subscriptions.Track(subscriptionName, func() {
 		log.Println("**Album unsubscribe")
 
-		client.Database.Songs.RemoveChangeHandler(handlerKey)
+		client.Services.Database.Songs.RemoveChangeHandler(handlerKey)
 	})
 }
 
-func filterWrite(client *connection.ClientConnection, command string, song *songs.Song, artist, album string) {
+func filterWrite(client *connection.Client, command string, song *songs.Song, artist, album string) {
 	if artist == song.File.Artist() && album == song.File.Album() {
 		rec := SongRecord{
 			ID:     song.ID,
@@ -52,9 +52,6 @@ func filterWrite(client *connection.ClientConnection, command string, song *song
 			Year:   song.File.Year(),
 		}
 
-		client.Write(connection.Message{
-			Type:    command,
-			Payload: rec,
-		})
+		client.Send(command, rec)
 	}
 }

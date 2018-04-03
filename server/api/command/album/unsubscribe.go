@@ -5,6 +5,6 @@ import (
 )
 
 // OnUnsubscribe ...
-func OnUnsubscribe(client *connection.ClientConnection, message connection.Message) {
-	client.DisconnectSubscription(subscriptionName)
+func OnUnsubscribe(client *connection.Client, message connection.Message) {
+	client.Subscriptions.Disconnect(subscriptionName)
 }

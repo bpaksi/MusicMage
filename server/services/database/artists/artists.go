@@ -3,7 +3,7 @@ package artists
 import (
 	"sync"
 
-	"github.com/bpaksi/MusicMage/server/database/files"
+	"github.com/bpaksi/MusicMage/server/services/database/files"
 	"github.com/bpaksi/MusicMage/server/tools"
 )
 

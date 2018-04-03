@@ -3,25 +3,25 @@ package database
 import (
 	"log"
 
-	"github.com/bpaksi/MusicMage/server/database/songs"
-
-	"github.com/bpaksi/MusicMage/server/database/files"
-
-	"github.com/bpaksi/MusicMage/server/database/artists"
-	"github.com/bpaksi/MusicMage/server/database/watcher"
+	"github.com/bpaksi/MusicMage/server/services/database/artists"
+	"github.com/bpaksi/MusicMage/server/services/database/files"
+	"github.com/bpaksi/MusicMage/server/services/database/songs"
+	"github.com/bpaksi/MusicMage/server/services/database/watcher"
 )
 
 // Database ...
 type Database struct {
-	files   *files.Files
-	Artists *artists.Artists
-	Songs   *songs.Songs
-	watcher *watcher.Watcher
+	RootFolder string
+	files      *files.Files
+	Artists    *artists.Artists
+	Songs      *songs.Songs
+	watcher    *watcher.Watcher
 }
 
 // NewDatabase ...
 func NewDatabase(rootFolder string) *Database {
 	database := &Database{}
+	database.RootFolder = rootFolder
 
 	database.watcher = watcher.NewWatcher()
 

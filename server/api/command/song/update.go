@@ -5,7 +5,7 @@ import (
 )
 
 // OnUpdate ...
-func OnUpdate(client *connection.ClientConnection, message connection.Message) {
+func OnUpdate(client *connection.Client, message connection.Message) {
 	// log.Printf("song update message: %#v", message)
 
 	params := message.Payload.(map[string]interface{})
@@ -16,7 +16,7 @@ func OnUpdate(client *connection.ClientConnection, message connection.Message) {
 	genre := params["genre"].(string)
 	year := params["year"].(string)
 
-	for _, song := range client.Database.Songs.Records {
+	for _, song := range client.Services.Database.Songs.Records {
 		if song.ID == id {
 			_, err := song.File.SetAttributes(
 				artist,
@@ -26,10 +26,7 @@ func OnUpdate(client *connection.ClientConnection, message connection.Message) {
 				year)
 
 			if err != nil {
-				client.Write(connection.Message{
-					Type:    "SONG_UPDATE_ERR",
-					Payload: err.Error(),
-				})
+				client.Error(err.Error())
 			}
 		}
 	}
