@@ -1,8 +1,6 @@
 import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-// import Typography from "material-ui/Typography";
-import { withStyles } from "material-ui/styles";
 import Table, {
   TableBody,
   TableCell,
@@ -12,21 +10,19 @@ import Table, {
   // TableSortLabel,
 } from "material-ui/Table";
 import Checkbox from "material-ui/Checkbox";
-import Paper from "material-ui/Paper";
-import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import Button from "material-ui/Button";
-
-// import Folder from "./folder";
 import * as actions from "../../state/actions";
 
 import GridField from "../util//gridField";
-// import Genre from "../util/genre";
-// import Grid from "material-ui/Grid";
-
+import Search from "./search"
 
 class Files extends React.Component {
+  onSearch = () => {
+    this.props.actions.searchOpen("Thousand Foot Krutch", "");
+  }
+
   render() {
     const { folders } = this.props;
 
@@ -36,27 +32,27 @@ class Files extends React.Component {
 
     return (
       <div>
-              <Toolbar>
-                <Typography variant="title" color="primary" gutterBottom={true}>
-                  Files
-                </Typography>
-                <Button>Search for Music</Button>
-              </Toolbar>
+        <Toolbar>
+          <Typography variant="title" color="primary" gutterBottom={true}>
+            Files
+          </Typography>
+          <Button onClick={this.onSearch}>Search for Music</Button>
+        </Toolbar>
         <Table>
           <TableHead>
             <TableRow>
-            <TableCell padding="checkbox">
-                    <Checkbox
-                    // indeterminate={numSelected > 0 && numSelected < rowCount}
-                    // checked={numSelected === rowCount}
-                    // onChange={onSelectAllClick}
-                    />
-                  </TableCell>              
+              <TableCell padding="checkbox">
+                <Checkbox
+                // indeterminate={numSelected > 0 && numSelected < rowCount}
+                // checked={numSelected === rowCount}
+                // onChange={onSelectAllClick}
+                />
+              </TableCell>
               <TableCell padding="none">#</TableCell>
               <TableCell padding="dense">Filename</TableCell>
-              <TableCell >Artist</TableCell>
-              <TableCell >Album</TableCell>
-              <TableCell >Title</TableCell>
+              <TableCell>Artist</TableCell>
+              <TableCell>Album</TableCell>
+              <TableCell>Title</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -70,7 +66,9 @@ class Files extends React.Component {
                     // onChange={onSelectAllClick}
                     />
                   </TableCell>
-                  <TableCell padding="none" numeric>{idx + 1}</TableCell>
+                  <TableCell padding="none" numeric>
+                    {idx + 1}
+                  </TableCell>
                   <TableCell padding="dense">{file.filename}</TableCell>
                   <TableCell>
                     <GridField
@@ -98,6 +96,7 @@ class Files extends React.Component {
             })}
           </TableBody>
         </Table>
+        <Search />
       </div>
     );
   }

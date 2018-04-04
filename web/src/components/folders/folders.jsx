@@ -2,22 +2,22 @@ import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Typography from "material-ui/Typography";
-import { withStyles } from "material-ui/styles";
-import Table, {
-  TableBody,
-  TableCell,
-  // TableFooter,
-  TableHead,
-  TableRow
-  // TableSortLabel,
-} from "material-ui/Table";
+// import { withStyles } from "material-ui/styles";
+// import Table, {
+//   TableBody,
+//   TableCell,
+//   // TableFooter,
+//   TableHead,
+//   TableRow
+//   // TableSortLabel,
+// } from "material-ui/Table";
 
-import Paper from "material-ui/Paper";
+// import Paper from "material-ui/Paper";
 import Folder from "./folder";
 import * as actions from "../../state/actions";
-import GridField from "../util//gridField";
-import Genre from "../util/genre";
-import Grid from "material-ui/Grid";
+// import GridField from "../util//gridField";
+// import Genre from "../util/genre";
+// import Grid from "material-ui/Grid";
 
 
 class Folders extends React.Component {
@@ -26,7 +26,7 @@ class Folders extends React.Component {
   }
 
   render() {
-    const { folders, songs } = this.props;
+    const { folders } = this.props;
 
     if (folders.length === 0) {
       return <span>No folders found</span>;

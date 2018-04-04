@@ -1,9 +1,7 @@
 import React from "react";
 import Grid from "material-ui/Grid";
 import Folders from "./folders";
-import Search from "./search";
 import Files from "./files";
-import * as actions from "../../state/actions";
 
 class byFolder extends React.Component {
   render() {

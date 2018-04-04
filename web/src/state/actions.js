@@ -151,6 +151,22 @@ export function selectFolder(id) {
   };
 }
 
+export function searchOpen(artist, album){
+  return {
+    type: ActionTypes.SEARCH_OPEN,
+    payload: {
+      artist,
+      album,
+    },
+  };
+}
+
+export function searchClose() {
+  return {
+    type: ActionTypes.SEARCH_CLOSE,
+  };
+}
+
 export function searchForAlbums(artist) {
   return {
     type: ActionTypes.SEARCH_ALBUM,

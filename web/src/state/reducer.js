@@ -14,6 +14,13 @@ const defaultState = {
     files: [],
     selected: 0
   },
+  search: {
+    open: false,
+    artist: "",
+    album: "",
+    artistResults: [],
+    albumResults: []
+  },
   notify: {
     open: false,
     message: "",
@@ -177,7 +184,7 @@ export default (state = defaultState, action) => {
     }
 
     case ActionTypes.FOLDERS_FETCHED: {
-      const folders = { ...state.folders, selected: 0};
+      const folders = { ...state.folders, selected: 0 };
       folders.all = action.payload;
       decorateFolders(folders.all);
 
@@ -195,8 +202,45 @@ export default (state = defaultState, action) => {
 
       return { ...state, folders };
     }
-    
-    
+
+    case ActionTypes.SEARCH_OPEN: {
+      const search = {
+        ...state.search,
+        open: true,
+        artist: action.payload.artist,
+        album: action.payload.album
+      };
+
+      return { ...state, search };
+    }
+    case ActionTypes.SEARCH_CLOSE: {
+      const search = { ...state.search, open: false };
+
+      return { ...state, search };
+    }
+    case ActionTypes.SEARCH_ALBUM: {
+      const search = { ...state.search };
+
+      return { ...state, search };
+    }
+    case ActionTypes.SEARCH_TRACKS: {
+      const search = { ...state.search };
+
+      return { ...state, search };
+    }
+    case ActionTypes.SEARCH_ALBUM_RESULTS: {
+      const search = {
+        ...state.search,
+        artistResults: action.payload
+      };
+
+      return { ...state, search };
+    }
+    case ActionTypes.SEARCH_TRACK_RESULTS: {
+      const search = { ...state.search };
+
+      return { ...state, search };
+    }
 
     default: {
       return state;
