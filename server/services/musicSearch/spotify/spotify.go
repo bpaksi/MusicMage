@@ -1,5 +1,7 @@
 package spotify
 
+// https://developer.spotify.com/web-api/
+
 import (
 	"context"
 	"log"
@@ -35,6 +37,5 @@ func Login() (api *API, err error) {
 	}
 
 	api.client = spotify.Authenticator{}.NewClient(api.token)
-
 	return
 }

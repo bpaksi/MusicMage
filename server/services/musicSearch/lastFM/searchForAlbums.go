@@ -1,8 +1,6 @@
 package lastFM
 
 import (
-	"log"
-
 	"github.com/bpaksi/MusicMage/server/services/musicSearch/data"
 	"github.com/shkh/lastfm-go/lastfm"
 )
@@ -19,20 +17,36 @@ func (api *API) SearchForAlbums(artist string) (results []data.AlbumRecord, err 
 		return
 	}
 
-	log.Printf("artist search: %s, Album Cnt: %d", result.Artist, len(result.Albums))
+	// log.Printf("LastFM - artist search: %s, Album Cnt: %d", result.Artist, len(result.Albums))
 	for _, album := range result.Albums {
 
-		log.Printf("\talbum: %s", album.Name)
+		// log.Printf("\tLastFM - album: %s", album.Name)
+
+		albumImageURL := ""
+		if len(album.Images) > 0 {
+			albumImageURL = album.Images[0].Url
+
+			for _, img := range album.Images {
+				if img.Size == "medium" {
+					albumImageURL = img.Url
+					break
+				}
+			}
+		}
 
 		results = append(results, data.AlbumRecord{
-			Artist: album.Artist.Name,
-			Name:   album.Name,
-			URL:    album.Url,
-			Mbid:   album.Mbid,
+			Artist:           album.Artist.Name,
+			ArtistInternalID: album.Artist.Mbid,
+			ArtistURL:        album.Artist.Url,
+			Album:            album.Name,
+			AlbumInternalID:  album.Mbid,
+			AlbumURL:         album.Url,
+			AlbumImageURL:    albumImageURL,
+			Source:           "LastFM",
 		})
 	}
 
-	log.Printf("album cnt: %d", len(results))
+	// log.Printf("LastFM - album cnt: %d", len(results))
 
 	return
 }

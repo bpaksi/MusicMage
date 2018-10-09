@@ -1,6 +1,8 @@
 package musicSearch
 
 import (
+	"sort"
+
 	"github.com/bpaksi/MusicMage/server/services/musicSearch/data"
 	"github.com/bpaksi/MusicMage/server/services/musicSearch/lastFM"
 	"github.com/bpaksi/MusicMage/server/services/musicSearch/spotify"
@@ -16,7 +18,7 @@ type MusicSearch struct {
 func Create() (musicSearch *MusicSearch) {
 	musicSearch = &MusicSearch{}
 	musicSearch.lastFM = lastFM.Login()
-	// musicSearch.spotify, err = spotify.Login()
+	musicSearch.spotify, _ = spotify.Login()
 
 	return
 }
@@ -30,8 +32,19 @@ func (musicSearch *MusicSearch) SearchForTracks(artist, album, id string) (resul
 }
 
 // SearchForAlbums ...
-func (musicSearch *MusicSearch) SearchForAlbums(artist string) (results []data.AlbumRecord, err error) {
+func (musicSearch *MusicSearch) SearchForAlbums(artist string) (results data.AlbumRecords, err error) {
+	lastFM, lastFMerr := musicSearch.lastFM.SearchForAlbums(artist)
+	spotify, spotifyerr := musicSearch.spotify.SearchForAlbums(artist)
 
-	results, err = musicSearch.lastFM.SearchForAlbums(artist)
+	if lastFMerr != nil {
+		err = lastFMerr
+	} else if spotifyerr != nil {
+		err = spotifyerr
+	} else {
+
+		results = append(lastFM, spotify...)
+
+		sort.Sort(results)
+	}
 	return
 }

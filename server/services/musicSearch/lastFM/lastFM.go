@@ -1,5 +1,7 @@
 package lastFM
 
+// https://www.last.fm/api/intro
+
 import (
 	"github.com/shkh/lastfm-go/lastfm"
 )

@@ -10,19 +10,14 @@ type albumParams struct {
 
 func init() {
 	connection.Router.Handle("SEARCH_ALBUM", ForAlbums)
-
 }
 
 // ForAlbums ...
 func ForAlbums(client *connection.Client, params albumParams) {
-	// params := message.Payload.(map[string]interface{})
-	// artist := params["artist"].(string)
-
-	// log.Println("here")
-
 	results, err := client.Services.Search.SearchForAlbums(params.Artist)
 	if err != nil {
 		client.Error(err.Error())
+		return
 	}
 
 	client.Send("SEARCH_ALBUM_RESULTS", results)

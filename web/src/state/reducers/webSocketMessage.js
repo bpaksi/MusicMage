@@ -5,9 +5,7 @@ export const webSocketMessage = (state, action) => {
     const message = action.parameters.data;
     const funcName = camelize(message.type.replace("_", " ").toLowerCase());
 
-
     if (serverMessages[funcName]) {
-			console.log("webSocketMessage: ", { m: serverMessages[funcName] });
       return serverMessages[funcName](state, message);
     }
 
