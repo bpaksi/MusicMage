@@ -13,9 +13,9 @@ type params struct {
 }
 
 // OnSubscribe ...
-func OnSubscribe(client *connection.Client, params params) {
+func OnSubscribe(client *connection.Client, params params) (bool, string) {
 	if client.Subscriptions.Contains(subscriptionName) {
-		return
+		return false, ""
 	}
 
 	log.Printf("parameters: %s, %s", params.Artist, params.Album)
@@ -40,6 +40,8 @@ func OnSubscribe(client *connection.Client, params params) {
 
 		client.Services.Database.Songs.RemoveChangeHandler(handlerKey)
 	})
+
+	return true, "success"
 }
 
 func filterWrite(client *connection.Client, command string, song *songs.Song, artist, album string) {

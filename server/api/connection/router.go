@@ -12,6 +12,12 @@ type RouterData struct {
 	routes map[string]reflect.Value
 }
 
+// MessageResult ...
+type messageResult struct {
+	CallerReturnKey int         `json:"callerReturnKey"`
+	Results         interface{} `json:"results"`
+}
+
 // Router ...
 var Router RouterData
 
@@ -73,7 +79,12 @@ func (router *RouterData) Route(client *Client, message Message) (err error) {
 
 		// log.Printf("params: %+v", params)
 
-		handler.Call(params)
+		results := handler.Call(params)
+
+		if len(message.ReturnKey) > 0 {
+			client.SendWithReturnKey("*"+message.Type, message.ReturnKey, results)
+		}
+
 		return
 	}
 

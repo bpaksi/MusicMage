@@ -4,6 +4,7 @@ import "encoding/json"
 
 // Message ...
 type Message struct {
-	Type    string          `json:"type"`
-	Payload json.RawMessage `json:"payload"`
+	Type      string          `json:"type"`
+	ReturnKey string          `json:"returnKey,omitempty"`
+	Payload   json.RawMessage `json:"payload"`
 }

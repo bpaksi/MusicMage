@@ -1,65 +1,63 @@
 import React from "react";
-import { withState } from "../withState";
+import { withStyles } from "@material-ui/core/styles";
+import { withState, compose } from "../withState";
+
 import Icon from "@material-ui/core/Icon";
 import Step from "@material-ui/core/Step";
 import StepButton from "@material-ui/core/StepButton";
 import Stepper from "@material-ui/core/Stepper";
+import { routes } from "../routes";
 
-import Library from "../library";
-import Artists from "../artists";
-
-const routes = {
-  library: {
-    label: "Library",
-    icon: "library_music",
-    render: () => <Library />
-  },
-  artists: {
-    label: "Artists",
-    icon: "person"
-  },
-  albums: {
-    label: "Albums",
-    icon: "album",
-    render: () => <Artists />
+const styles = {
+  connector: {
+    marginLeft: "5px",
+    marginRight: "5px"
   }
 };
 
-const BreadcrumpConnector = () => <span>/</span>;
+const BreadcrumpConnector = ({ classes }) => (
+  <span className={classes.connector}>/</span>
+);
+
+const NavStep = ({ route, active, onClick }) => (
+  <Step>
+    <StepButton
+      icon={
+        route.icon && (
+          <Icon color={active ? "primary" : "action"}>{route.icon}</Icon>
+        )
+      }
+      onClick={onClick}
+    >
+      {route.label}
+    </StepButton>
+  </Step>
+);
 
 class Navigation extends React.Component {
-  onNavigate = idx => {
-    const { navigation, actions } = this.props;
-    if (idx < navigation.stack.length - 1) {
-      actions.navigateBack(idx);
-    }
-  };
-
   render() {
-    const { navigation } = this.props;
+    const { navigation, classes, actions } = this.props;
     const activeStep = navigation.stack.length - 1;
 
     return (
-      <Stepper activeStep={activeStep} connector={<BreadcrumpConnector />}>
+      <Stepper
+        activeStep={activeStep}
+        connector={<BreadcrumpConnector classes={classes} />}
+      >
         {navigation.stack.map((node, idx) => (
-          <Step key={node.key}>
-            <StepButton
-              icon={
-                routes[node.key].icon && (
-                  <Icon color={activeStep === idx ? "primary" : "action"}>
-                    {routes[node.key].icon}
-                  </Icon>
-                )
-              }
-              onClick={() => this.onNavigate(idx)}
-            >
-              {routes[node.key].label}
-            </StepButton>
-          </Step>
+          <NavStep
+            key={node.key}
+            route={routes[node.key]}
+            active={idx === activeStep}
+            onClick={() => actions.navigateBack(idx)}
+          />
         ))}
       </Stepper>
     );
   }
 }
 
-export default withState()(Navigation);
+export default compose(
+  withState(),
+  withStyles(styles)
+)(Navigation);

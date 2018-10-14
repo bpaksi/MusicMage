@@ -39,6 +39,11 @@ func StartClient(socket *websocket.Conn, services services.Services) *Client {
 
 // Send ...
 func (client *Client) Send(command string, payload interface{}) {
+	client.SendWithReturnKey(command, "", payload)
+}
+
+// SendWithReturnKey ...
+func (client *Client) SendWithReturnKey(command string, returnKey string, payload interface{}) {
 
 	raw, err := json.Marshal(payload)
 	if err != nil {
@@ -46,8 +51,9 @@ func (client *Client) Send(command string, payload interface{}) {
 	}
 
 	message := Message{
-		Type:    command,
-		Payload: raw,
+		Type:      command,
+		ReturnKey: returnKey,
+		Payload:   raw,
 	}
 
 	client.writeChannel <- message
@@ -60,8 +66,8 @@ func (client *Client) Error(message string) {
 
 func (client *Client) readData(disconnected chan<- bool) {
 	defer log.Println("Client.readData exited")
-	var message Message
 	for {
+		var message Message
 		err := client.socket.ReadJSON(&message)
 		if err != nil {
 			log.Println("Client.readData error: " + err.Error())

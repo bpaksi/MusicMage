@@ -3,8 +3,18 @@ import { withStyles } from "@material-ui/core/styles";
 import { withState, compose } from "../withState";
 
 import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import Icon from "@material-ui/core/Icon";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import Avatar from "@material-ui/core/Avatar";
+import IconButton from "@material-ui/core/IconButton";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+
+import { routes } from "../routes";
 
 const styles = theme => ({
   root: {
@@ -22,8 +32,28 @@ class Library extends React.Component {
         <Typography variant="headline" component="h3">
           Library
         </Typography>
-        <Button onClick={() => actions.navigateTo("artists")}>Artist</Button>
-        <Button onClick={() => actions.navigateTo("albums")}>Albums</Button>
+        <List>
+          {Object.keys(routes).map(
+            route =>
+              routes[route].menu && (
+                <ListItem key={route}>
+                  {routes[route].icon && (
+                    <ListItemAvatar>
+                      <Avatar>
+                        <Icon>{routes[route].icon}</Icon>
+                      </Avatar>
+                    </ListItemAvatar>
+                  )}
+                  <ListItemText primary={routes[route].label} />
+                  <ListItemSecondaryAction>
+                    <IconButton onClick={() => actions.navigateTo(route)}>
+                      <ChevronRightIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              )
+          )}
+        </List>
       </Paper>
     );
   }

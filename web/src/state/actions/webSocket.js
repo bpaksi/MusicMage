@@ -1,4 +1,5 @@
 import { NotifyStatuses } from "./notify";
+import { onWebSocketMessage, webSocketCallbacks } from "./webSocketMessage"
 
 export const webSocketConnect = url => (dispatch, getState) => {
   const { webSocket } = getState();
@@ -9,8 +10,6 @@ export const webSocketConnect = url => (dispatch, getState) => {
   const socket = new WebSocket(url);
   socket.onopen = () => dispatch(webSocketConnected());
   socket.onclose = () => {
-    console.log("onclose: ");
-
     dispatch(webSocketDisconnected());
 
     // attempt restart
@@ -19,16 +18,9 @@ export const webSocketConnect = url => (dispatch, getState) => {
       setTimeout(() => dispatch(webSocketConnect(webSocket.url)), 5000);
     }
   };
-  socket.onmessage = e => {
-    try {
-      const message = JSON.parse(e.data);
-      dispatch(webSocketMessage(message));
-    } catch (err) {
-      dispatch(webSocketMsgError(e.data, err));
-    }
-  };
+  socket.onmessage = onWebSocketMessage(dispatch);
 
-  dispatch(webSocketConnecting(url, socket));
+	dispatch(webSocketConnecting(url, socket));
 };
 
 export const webSocketConnecting = (url, socket) => ({
@@ -76,19 +68,13 @@ export const webSocketDisconnected = () => ({
   })
 });
 
-export const webSocketMsgError = (data, error) => ({
-  type: "webSocketMsgError",
-  parameters: { data, error }
-});
+export const webSocketSend = (payload, callback) => (dispatch, getState) => {
+  if (callback) {
+    payload.returnKey = webSocketCallbacks.register(callback);
+  }
 
-export const webSocketMessage = data => ({
-  type: "webSocketMessage",
-  parameters: { data }
-});
-
-export const webSocketSend = payload => (dispatch, getState) => {
   sendOnConnect(getState, payload, () => {
-    dispatch(webSocketSent());
+    dispatch(webSocketSent(payload));
   });
 };
 

@@ -35,6 +35,12 @@ class Library extends React.Component {
     actions.artistUnsubscribe();
   }
 
+  onClick = artist => {
+    const { actions } = this.props;
+
+    actions.navigateTo("album", { artist: artist.name, album: artist.albumName });
+  };
+
   render() {
     const { artists, classes } = this.props;
 
@@ -56,7 +62,7 @@ class Library extends React.Component {
                 secondary={artist.albumName}
               />
               <ListItemSecondaryAction>
-                <IconButton aria-label="Delete">
+                <IconButton onClick={() => this.onClick(artist)}>
                   <ChevronRightIcon />
                 </IconButton>
               </ListItemSecondaryAction>

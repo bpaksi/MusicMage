@@ -2,13 +2,7 @@ import React from "react";
 import { withState } from "../withState";
 // import Slide from "@material-ui/core/Slide";
 
-import Library from "../library";
-import Artists from "../artists";
-
-const renderMethods = {
-  library: () => <Library />,
-  artists:() => <Artists />
-};
+import { routes } from "../routes";
 
 class Body extends React.Component {
   render() {
@@ -17,14 +11,14 @@ class Body extends React.Component {
       return null;
     }
 
-    const activeStep = navigation.stack[navigation.stack.length - 1];
-    const render = renderMethods[activeStep.key];
-    if (!render) {
-      return null;
-    }
+    const step = navigation.stack[navigation.stack.length - 1];
+		const route = routes[step.key];
 
-		return render()
-    // return (
+		if (!route.render) return null;
+
+    return route.render(step.param);
+
+		// return (
     //   <Slide key={activeStep.key} direction={navigation.direction === "forward" ? "left" : "right"} in={true}>
     //     {render()}
     //   </Slide>

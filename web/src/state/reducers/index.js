@@ -1,5 +1,4 @@
 import { NotifyStatuses } from "../actions/notify";
-import { webSocketMessage } from "./webSocketMessage" 
 
 const initialState = {
   artists: [],
@@ -35,16 +34,10 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
-	var reducers = [webSocketMessage];
-	if (action.reduce) {
-		reducers = [action.reduce, ...reducers];
-	}
-	
-	var newState = state
-	reducers.forEach( reducer => {
-		const reducerState = reducer(newState, action);
-		newState = {...newState, ...reducerState};
-	})
-	
-	return newState;
-}
+  if (action.reduce) {
+    const results = action.reduce(state, action);
+    return { ...state, ...results };
+  }
+
+  return state;
+};
