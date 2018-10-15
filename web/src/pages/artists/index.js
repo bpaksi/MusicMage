@@ -2,8 +2,9 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { withState, compose } from "../withState";
 
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardContent from "@material-ui/core/CardContent";
 
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -38,38 +39,41 @@ class Library extends React.Component {
   onClick = artist => {
     const { actions } = this.props;
 
-    actions.navigateTo("album", { artist: artist.name, album: artist.albumName });
+    actions.navigateTo("album", {
+      artist: artist.name,
+      album: artist.albumName
+    });
   };
 
   render() {
     const { artists, classes } = this.props;
 
     return (
-      <Paper className={classes.root} elevation={1}>
-        <Typography variant="headline" component="h3">
-          Artists
-        </Typography>
-        <List>
-          {artists.map(artist => (
-            <ListItem key={artist.id}>
-              <ListItemAvatar>
-                <Avatar>
-                  <PersonIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={artist.name}
-                secondary={artist.albumName}
-              />
-              <ListItemSecondaryAction>
-                <IconButton onClick={() => this.onClick(artist)}>
-                  <ChevronRightIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
-      </Paper>
+      <Card className={classes.card}>
+        <CardHeader title="Artists" />
+        <CardContent>
+          <List>
+            {artists.map(artist => (
+              <ListItem key={artist.id}>
+                <ListItemAvatar>
+                  <Avatar>
+                    <PersonIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={artist.name}
+                  secondary={artist.albumName}
+                />
+                <ListItemSecondaryAction>
+                  <IconButton onClick={() => this.onClick(artist)}>
+                    <ChevronRightIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        </CardContent>
+      </Card>
     );
   }
 }

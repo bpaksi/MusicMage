@@ -2,9 +2,10 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { withState, compose } from "../withState";
 
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Icon from "@material-ui/core/Icon";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardContent from "@material-ui/core/CardContent";
+
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -12,15 +13,13 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
+import Icon from "@material-ui/core/Icon";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 import { routes } from "../routes";
 
 const styles = theme => ({
-  root: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2
+  card: {
   }
 });
 
@@ -28,11 +27,10 @@ class Library extends React.Component {
   render() {
     const { classes, actions } = this.props;
     return (
-      <Paper className={classes.root} elevation={1}>
-        <Typography variant="headline" component="h3">
-          Library
-        </Typography>
-        <List>
+      <Card className={classes.card}>
+        <CardHeader title="Library" />
+        <CardContent>
+					<List>
           {Object.keys(routes).map(
             route =>
               routes[route].menu && (
@@ -52,9 +50,10 @@ class Library extends React.Component {
                   </ListItemSecondaryAction>
                 </ListItem>
               )
-          )}
-        </List>
-      </Paper>
+					)}
+					</List>
+        </CardContent>
+      </Card>
     );
   }
 }

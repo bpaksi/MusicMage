@@ -72,16 +72,9 @@ class Header extends React.Component {
             <MenuItem onClick={this.onMenuLibrary}>Library</MenuItem>
             <MenuItem>Settings</MenuItem>
           </Menu>
-          {/* <a
-						href="#"
-            color="inherit"
-            style={{ cursor: "pointer" }}
-            onClick={this.onMenuLibrary}
-          > */}
-            <Typography variant="title" color="inherit">
-              Music Mage
-            </Typography>
-          {/* </a> */}
+          <Typography variant="title" color="inherit">
+            Music Mage
+          </Typography>
         </Toolbar>
       </AppBar>
     );

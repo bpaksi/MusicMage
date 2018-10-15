@@ -28,13 +28,13 @@ export const albumUnsubscribe = () => dispatch => {
 
 export const albumSubscribed = () => ({
   type: "albumSubscribed",
-  reduce: () => ({})
+  reduce: () => ({songs: []})
 });
 
 export const albumUnsubscribed = data => ({
   type: "albumUnsubscribed",
   parameters: { data },
-  reduce: () => ({})
+  reduce: () => ({songs: []})
 });
 
 export const songAdded = data => ({

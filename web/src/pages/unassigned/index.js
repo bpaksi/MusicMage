@@ -15,7 +15,7 @@ const styles = theme => ({
 
 class Library extends React.Component {
   render() {
-    const { classes, actions } = this.props;
+    const { classes } = this.props;
     return (
       <Paper className={classes.root} elevation={1}>
         <Typography variant="headline" component="h3">

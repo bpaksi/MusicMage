@@ -1,29 +1,35 @@
-import React from "react";
-import { withState } from "../withState";
-// import Slide from "@material-ui/core/Slide";
+import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
+import { withState, compose } from "../withState";
 
-import { routes } from "../routes";
+import Header from "./header";
+import Navigation from "./navigation";
+import Client from "./client";
 
-class Body extends React.Component {
+const styles = theme => ({
+});
+
+class Body extends Component {
+  componentDidMount() {
+    const { actions } = this.props;
+    actions.webSocketConnect("ws://localhost:4000/api");
+  }
+  componentWillUnmount() {
+    const { actions } = this.props;
+    actions.webSocketDisconnect();
+  }
+
   render() {
-    const { navigation } = this.props;
-    if (navigation.stack.length === 0) {
-      return null;
-    }
-
-    const step = navigation.stack[navigation.stack.length - 1];
-		const route = routes[step.key];
-
-		if (!route.render) return null;
-
-    return route.render(step.param);
-
-		// return (
-    //   <Slide key={activeStep.key} direction={navigation.direction === "forward" ? "left" : "right"} in={true}>
-    //     {render()}
-    //   </Slide>
-    // );
+    return (
+      <>
+        <Header />
+        <Navigation />
+        <Client />
+      </>
+    );
   }
 }
-
-export default withState()(Body);
+export default compose(
+  withState(),
+  withStyles(styles)
+)(Body);
