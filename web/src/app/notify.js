@@ -20,6 +20,8 @@ const styles = theme => ({
 });
 
 class Notify extends React.Component {
+	state = {open: false}
+
   render() {
 		const { notify, classes, actions } = this.props;
 	
