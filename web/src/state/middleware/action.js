@@ -3,14 +3,14 @@ export default ({ getState, dispatch }) => next => action => {
   if (isFunction(beforeReduce)) {
     const results = beforeReduce({ getState, dispatch, action });
 
-    if (isBoolean(results)) {
-      if (results === false) {
-        return;
-      }
-    }
-
     if (results) {
-      action = { ...action, ...results };
+      if (isBoolean(results)) {
+        if (results === false) {
+          return;
+        }
+      } else {
+        action = { ...action, ...results };
+      }
     }
   }
 
