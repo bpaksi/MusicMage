@@ -1,44 +1,46 @@
 import { webSocketSend } from "./webSocket";
 
-export const albumSubscribe = (artist, album) => dispatch => {
-  dispatch(albumSubscribed());
-  dispatch(
-    webSocketSend({
-      type: "ALBUM_SUBSCRIBE",
-      payload: {
-        artist,
-        album
-      }
-    })
-  );
-};
+export const albumSubscribe = (artist, album) => ({
+  type: "albumSubscribe",
+  parameters: { artist, album },
+  reduce: () => ({ songs: [] }),
+  afterReduce: ({ dispatch }) => {
+    dispatch(
+      webSocketSend(
+        {
+          type: "ALBUM_SUBSCRIBE",
+          payload: {
+            artist,
+            album
+          }
+        },
+        results => {
+          dispatch(albumSubscribed(results));
+        }
+      )
+    );
+  }
+});
 
-export const albumUnsubscribe = () => dispatch => {
-  dispatch(
-    webSocketSend(
-      {
+export const albumUnsubscribe = () => ({
+  type: "albumUnsubscribe",
+  reduce: () => ({ songs: [] }),
+  afterReduce: ({ dispatch }) => {
+    dispatch(
+      webSocketSend({
         type: "ALBUM_UNSUBSCRIBE"
-      },
-      data => {
-        dispatch(albumUnsubscribed(data));
-      }
-    )
-  );
-};
+      })
+    );
+  }
+});
 
-export const albumSubscribed = () => ({
+const albumSubscribed = results => ({
   type: "albumSubscribed",
-  reduce: () => ({songs: []})
+  parameters: { results }
 });
 
-export const albumUnsubscribed = data => ({
-  type: "albumUnsubscribed",
-  parameters: { data },
-  reduce: () => ({songs: []})
-});
-
-export const songAdded = data => ({
+export const songAdded = song => ({
   type: "songAdded",
-  parameters: { data },
-  reduce: state => ({ songs: [...state.songs, data] })
+  parameters: { song },
+  reduce: state => ({ songs: [...state.songs, song] })
 });

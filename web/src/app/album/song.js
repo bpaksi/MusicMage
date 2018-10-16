@@ -3,12 +3,8 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { withState, compose } from "../withState";
 
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
-import TextField from "@material-ui/core/TextField";
 
 import { EditField } from "../util";
 
@@ -29,10 +25,10 @@ class Song extends React.Component {
   };
 
   render() {
-    const { song, edits, classes } = this.props;
+    const { song, edits } = this.props;
     const edited = { ...song, ...edits };
 
-    console.log("Song - render", { song, edits });
+    // console.log("Song - render", { song, edits });
 
     return (
       <TableRow key={song.id}>

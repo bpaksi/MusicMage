@@ -1,39 +1,43 @@
 import { webSocketSend } from "./webSocket";
 
-export const artistSubscribe = artist => dispatch => {
-  dispatch(artistSubscribed());
-  dispatch(
-    webSocketSend({
-      type: "ARTIST_SUBSCRIBE",
-      payload: artist ? artist : ""
-    })
-  );
-};
+export const artistSubscribe = artist => ({
+  type: "artistSubscribe",
+  parameters: { artist },
+  reduce: () => ({ artists: [] }),
+  afterReduce: ({ dispatch }) => {
+    dispatch(
+      webSocketSend(
+        {
+          type: "ARTIST_SUBSCRIBE",
+          payload: artist ? artist : ""
+        },
+        results => {
+          dispatch(artistSubscribed(results));
+        }
+      )
+    );
+  }
+});
 
-export const artistSubscribed = () => ({
+const artistSubscribed = results => ({
   type: "artistSubscribed",
-  reduce: () => ({ artists: [] })
+  parameters: { results }
 });
 
-export const artistUnsubscribe = () => dispatch => {
-  dispatch(
-    webSocketSend(
-      {
+export const artistUnsubscribe = () => ({
+  type: "artistUnsubscribe",
+  reduce: () => ({ artists: [] }),
+  afterReduce: ({ dispatch }) => {
+    dispatch(
+      webSocketSend({
         type: "ARTIST_UNSUBSCRIBE"
-      },
-      () => {
-        dispatch(artistUnsubscribed());
-      }
-    )
-  );
-};
-
-export const artistUnsubscribed = () => ({
-  type: "artistUnsubscribed",
-  reduce: () => ({ artists: [] })
+      })
+    );
+  }
 });
 
-export const artistAdded = payload => ({
+export const artistAdded = artist => ({
   type: "artistAdded",
-  reduce: state => ({ artists: [...state.artists, payload] })
+  parameters: { artist },
+  reduce: state => ({ artists: [...state.artists, artist] })
 });

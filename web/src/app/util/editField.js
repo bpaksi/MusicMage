@@ -8,18 +8,18 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Tooltip from "@material-ui/core/Tooltip";
 
-const styles = {
-  textField: {},
-  button: {
-    width: 25,
-    height: 48,
-    padding: 0
-  },
-  icon: {
-    width: 20,
-    height: 20
-  }
-};
+// const styles = {
+//   textField: {},
+//   button: {
+//     width: 25,
+//     height: 48,
+//     padding: 0
+//   },
+//   icon: {
+//     width: 20,
+//     height: 20
+//   }
+// };
 
 class EditField extends React.Component {
   render() {

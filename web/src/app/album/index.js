@@ -50,7 +50,6 @@ class Artist extends React.Component {
   render() {
     const { artistName, albumName, songs, classes } = this.props;
     const { dirty } = this.state;
-    console.log("Artist - render", { song: songs[0], dirty });
 
     // console.log("Album - render", {artistName, albumName, props: this.props})
 

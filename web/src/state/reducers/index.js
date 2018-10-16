@@ -1,5 +1,3 @@
-import { NotifyStatuses } from "../actions/notify";
-
 const initialState = {
   artists: [],
   songs: [],
@@ -14,9 +12,7 @@ const initialState = {
     ]
   },
   notify: {
-    open: false,
-    message: "",
-    status: NotifyStatuses.DEFAULT
+    messages: [] // {message, type} type: "", success, error
   },
   confirm: {
     open: false,
@@ -25,11 +21,10 @@ const initialState = {
     onConfirm: null
   },
   webSocket: {
-    attemptRestart: true,
-    open: false,
-    manualExit: false,
     url: "",
-    socket: null
+    socket: null,
+    forceExit: false,
+    callbacks: [] // {key, callback}
   }
 };
 

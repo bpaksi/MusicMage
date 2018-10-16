@@ -6,4 +6,4 @@ import reducer from "./reducers";
 
 const composeEnhancers = composeWithDevTools({});
 
-export default createStore(reducer, composeEnhancers(middleware));
+export default () => createStore(reducer, composeEnhancers(middleware));
