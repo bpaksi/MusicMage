@@ -3,6 +3,7 @@ const initialState = {
   songs: [],
 
   navigation: {
+    pageKey: 1,
     direction: "forward",
     stack: [
       {
@@ -12,6 +13,7 @@ const initialState = {
     ]
   },
   notify: {
+    open: false,
     messages: [] // {message, type} type: "", success, error
   },
   confirm: {
@@ -24,13 +26,20 @@ const initialState = {
     url: "",
     socket: null,
     forceExit: false,
+    reconnect: false,
     callbacks: [] // {key, callback}
   }
 };
 
 export default (state = initialState, action) => {
-  if (action.reduce) {
-    const results = action.reduce(state, action);
+  const { reduce, scope } = action;
+
+  if (reduce) {
+    var results = reduce(scope ? state[scope] : state, action);
+    if (scope) {
+      results = { [scope]: { ...state[scope], ...results } };
+    }
+
     return { ...state, ...results };
   }
 

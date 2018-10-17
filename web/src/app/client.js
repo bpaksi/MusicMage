@@ -23,9 +23,10 @@ class Client extends React.Component {
     const step = navigation.stack[navigation.stack.length - 1];
     const route = routes[step.key];
 
-    if (!route.render) return null;
-
-    return <Paper className={classes.paper}>{route.render(step.param)}</Paper>;
+		if (!route.render) return null;
+		
+		const params = {...step.param, key: step.key + navigation.pageKey }
+    return <Paper className={classes.paper}>{route.render(params)}</Paper>;
 
     // return (
     //   <Slide key={activeStep.key} direction={navigation.direction === "forward" ? "left" : "right"} in={true}>

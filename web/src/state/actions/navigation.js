@@ -1,11 +1,12 @@
+const scope = "navigation";
+
 export const navigateTo = (key, param) => ({
   type: "navigateTo",
+  scope,
   parameters: { key, param },
   reduce: state => ({
-    navigation: {
-      direction: "forward",
-      stack: [...state.navigation.stack, { key, param }]
-    }
+    direction: "forward",
+    stack: [...state.stack, { key, param }]
   })
 });
 
@@ -14,12 +15,19 @@ export const navigateBack = index => {
 
   return {
     type: "navigateBack",
+    scope,
     parameters: { index },
     reduce: state => ({
-      navigation: {
-        direction: "backward",
-        stack: state.navigation.stack.slice(0, idx)
-      }
+      direction: "backward",
+      stack: state.stack.slice(0, idx)
     })
   };
 };
+
+export const navigateRefresh = () => ({
+  type: "navigateRefresh",
+  scope,
+  reduce: state => ({
+    pageKey: state.pageKey + 1
+  })
+});

@@ -1,23 +1,27 @@
 export default ({ getState, dispatch }) => next => action => {
-  const { beforeReduce, afterReduce } = action;
-  if (isFunction(beforeReduce)) {
-    const results = beforeReduce({ getState, dispatch, action });
+	const { beforeReduce, afterReduce, scope } = action;
+	
+	var getScopedState = getState 
+	if (scope) {
+		getScopedState = () => (getState()[scope]);
+	}
 
-    if (results) {
-      if (isBoolean(results)) {
-        if (results === false) {
-          return;
-        }
-      } else {
-        action = { ...action, ...results };
+  if (isFunction(beforeReduce)) {
+    const results = beforeReduce({ getState: getScopedState, dispatch, action });
+
+    if (isBoolean(results)) {
+      if (results === false) {
+        return;
       }
+    } else if (results) {
+      action = { ...action, ...results };
     }
   }
 
   const results = next(action);
 
   if (isFunction(afterReduce)) {
-    afterReduce({ getState, dispatch, action });
+    afterReduce({ getState: getScopedState, dispatch, action });
   }
 
   return results;

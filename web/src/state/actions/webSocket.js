@@ -1,14 +1,17 @@
 import { notifySuccess, notifyError } from "./notify";
+import { navigateRefresh } from "./navigation";
 
 import * as album from "./album";
 import * as artist from "./artist";
 
 const handlers = [album, artist];
+const scope = "webSocket";
 
 export const webSocketConnect = url => ({
   type: "webSocketConnect",
   parameters: { url },
-  reduce: state => ({ webSocket: { ...state.webSocket, url } }),
+  scope,
+  reduce: () => ({ url }),
   afterReduce: ({ dispatch }) => {
     try {
       const socket = new WebSocket(url);
@@ -26,25 +29,32 @@ export const webSocketConnect = url => ({
 
 const webSocketConnecting = socket => ({
   type: "webSocketConnecting",
-  reduce: state => ({ webSocket: { ...state.webSocket, socket } })
+  scope,
+  reduce: () => ({ socket })
 });
 
 const webSocketConnected = () => ({
   type: "webSocketConnected",
-  afterReduce: ({ dispatch }) => {
-    dispatch(notifySuccess("Server connected"));
-  }
+  scope,
+  beforeReduce: ({ getState, dispatch }) => {
+    const webSocket = getState();
+
+    if (webSocket.reconnect) {
+      dispatch(notifySuccess("Server connected"));
+      dispatch(navigateRefresh());
+    }
+  },
+  reduce: () => ({ reconnect: false })
 });
 
 export const webSocketDisconnect = () => ({
   type: "webSocketDisconnect",
-  reduce: state => ({
-    webSocket: { ...state.webSocket, forceExit: true }
-  }),
-  afterReduce: ({ getState }) => {
-    const { webSocket, dispatch } = getState();
-
+  scope,
+  reduce: () => ({ forceExit: true }),
+  afterReduce: ({ getState, dispatch }) => {
     try {
+      const webSocket = getState();
+
       webSocket.socket.close();
     } catch (err) {
       dispatch(notifyError("Web Socket error while closing", err));
@@ -54,11 +64,13 @@ export const webSocketDisconnect = () => ({
 
 const webSocketDisconnected = () => ({
   type: "webSocketDisconnected",
+  scope,
   reduce: state => ({
-    webSocket: { ...state.webSocket, socket: null }
+    socket: null,
+    reconnect: !state.forceExit
   }),
   afterReduce: ({ getState, dispatch }) => {
-    const { webSocket } = getState();
+    const webSocket = getState();
     if (!webSocket.forceExit) {
       dispatch(notifyError("Lost server connection!"));
 
@@ -74,15 +86,16 @@ export const webSocketSend = (payload, serverCallback) => {
 
   return {
     type: "webSocketSend",
+    scope,
     parameters: { payload, serverCallback },
     reduce: state => {
       if (payload.returnKey) {
         const callbacks = [
-          ...state.webSocket.callbacks,
+          ...state.callbacks,
           { key: payload.returnKey, callback: serverCallback }
         ];
 
-        return { webSocket: { ...state.webSocket, callbacks } };
+        return { callbacks };
       }
     },
     afterReduce: ({ getState, dispatch }) => {
@@ -93,6 +106,7 @@ export const webSocketSend = (payload, serverCallback) => {
 
 const webSocketMessage = data => ({
   type: "webSocketMessage",
+  scope,
   parameters: { data },
   beforeReduce: ({ getState, dispatch }) => {
     var continueWithMsg = true;
@@ -105,8 +119,7 @@ const webSocketMessage = data => ({
     }
 
     if (message.returnKey) {
-      const { webSocket } = getState();
-
+      const webSocket = getState();
       const index = webSocket.callbacks.findIndex(
         i => i.key === message.returnKey
       );
@@ -134,18 +147,18 @@ const webSocketMessage = data => ({
 const webSocketCallback = (message, callback) => ({
   type: "webSocketCallback",
   parameters: { message, callback },
+  scope,
   reduce: state => {
     console.assert(message.returnKey, "Expected returnKey");
-    const webSocket = { ...state.webSocket };
-    const idx = webSocket.callbacks.findIndex(i => i.key === message.returnKey);
+    const idx = state.callbacks.findIndex(i => i.key === message.returnKey);
 
     if (idx >= 0) {
-      webSocket.callbacks = [
-        ...webSocket.callbacks.splice(0, idx),
-        ...webSocket.callbacks.splice(idx + 1)
+      const callbacks = [
+        ...state.callbacks.splice(0, idx),
+        ...state.callbacks.splice(idx + 1)
       ];
 
-      return { webSocket };
+      return { callbacks };
     }
   },
   afterReduce: () => {
@@ -154,7 +167,7 @@ const webSocketCallback = (message, callback) => ({
 });
 
 const sendOnConnect = (getState, dispatch, payload, retrycount) => {
-  const { webSocket } = getState();
+  const webSocket = getState();
   if (webSocket.socket.readyState === 1) {
     try {
       const message = JSON.stringify(payload);

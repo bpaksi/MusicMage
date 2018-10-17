@@ -15,37 +15,45 @@ const styles = theme => ({
     backgroundColor: "green"
   },
   close: {
-    padding: theme.spacing.unit / 2,
+    padding: theme.spacing.unit / 2
   }
 });
 
 class Notify extends React.Component {
-	state = {open: false}
+  onClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    const { actions } = this.props;
+    actions.notifyClose();
+  };
+
+  onExited = () => {
+    const { actions } = this.props;
+    actions.notifyExit();
+  };
 
   render() {
-		const { notify, classes, actions } = this.props;
-	
+    const { notify, classes } = this.props;
+    var className;
+    var duration;
+    var messageTxt;
 
-		// var open = false
-		var className = classes.success
-    var duration = 3000;
-		
-		// if (notify.message.length > 0)
-		// {
-
-		// }
-    //   notify.type === "success"
-    //     ? 
-    //     : notify.type === "error"
-    //       ? classes.error
-    //       : classes.default;
+    if (notify.messages.length > 0) {
+      const message = notify.messages[0];
+      className = classes[message.type || "default"];
+      duration = message.type === "error" ? 6000 : 3000;
+      messageTxt = message.message;
+    }
 
     return (
       <Snackbar
         open={notify.open}
-        message={notify.message}
+        message={messageTxt}
         autoHideDuration={duration}
         onClose={this.onClose}
+        onExited={this.onExited}
         ContentProps={{
           classes: {
             root: className
@@ -53,10 +61,10 @@ class Notify extends React.Component {
         }}
         action={[
           <IconButton
-					key="close"
+            key="close"
             color="inherit"
             className={classes.close}
-            onClick={actions.notifyClose}
+            onClick={this.onClose}
           >
             <CloseIcon />
           </IconButton>
@@ -65,7 +73,6 @@ class Notify extends React.Component {
     );
   }
 }
-
 
 export default compose(
   withState(),

@@ -1,40 +1,40 @@
+const scope = "navigation";
+
 export const notifyMessage = message => ({
   type: "notifyMessage",
-  parameters: { message },
-  reduce: (state) => ({
-    notify: {
-      messages: [...state.notify.messages, {message}]
-    }
-  })
+  ...createMessage(message)
 });
 
 export const notifySuccess = message => ({
   type: "notifySuccess",
-  parameters: { message },
-  reduce: (state) => ({
-    notify: {
-      messages: [...state.notify.messages, {message, type: "success"}]
-    }
-  })
+  ...createMessage(message, "success")
 });
 
 export const notifyError = (message, extra) => ({
   type: "notifyError",
-  parameters: { message, extra },
-  reduce: (state) => ({
-    notify: {
-      messages: [...state.notify.messages, {message, type: "error"}]
-		}
-	})
+  ...createMessage(message, "error", extra)
 });
 
 export const notifyClose = () => ({
   type: "notifyClose",
-  reduce: (state) => ({
-    notify: {
-      messages: [...state.notify.messages.slice(1)]
-		}
-	})
+  scope,
+  reduce: () => ({ open: false })
 });
 
+export const notifyExit = () => ({
+  type: "notifyExit",
+  scope,
+  reduce: state => ({
+    open: state.messages.length > 1,
+    messages: [...state.messages.slice(1)]
+  })
+});
 
+const createMessage = (message, type, extra) => ({
+  parameters: { message, extra },
+  scope,
+  reduce: state => ({
+    open: !state.open,
+    messages: [...state.messages, { message, type }]
+  })
+});
