@@ -25,8 +25,5 @@ export const initialState = {
   webSocket: {
     url: "",
     socket: null,
-    forceExit: false,
-    reconnect: false,
-    callbacks: [] // {key, callback}
   }
 };

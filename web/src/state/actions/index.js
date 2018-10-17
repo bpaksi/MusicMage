@@ -3,5 +3,5 @@ export * from "./album"
 export * from "./confirm"
 export * from "./navigation"
 export * from "./notify"
-export * from "./webSocket"
+export {webSocketConnect, webSocketDisconnect} from "./webSocket"
 

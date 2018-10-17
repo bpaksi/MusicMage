@@ -1,13 +1,17 @@
-export default ({ getState, dispatch }) => next => action => {
-	const { beforeReduce, afterReduce, scope } = action;
-	
-	var getScopedState = getState 
-	if (scope) {
-		getScopedState = () => (getState()[scope]);
-	}
+export default () => ({ getState, dispatch }) => next => action => {
+  const { beforeReduce, afterReduce, scope } = action;
+
+  var getScopedState = getState;
+  if (scope) {
+    getScopedState = () => getState()[scope];
+  }
 
   if (isFunction(beforeReduce)) {
-    const results = beforeReduce({ getState: getScopedState, dispatch, action });
+    const results = beforeReduce({
+      getState: getScopedState,
+      dispatch,
+      action
+    });
 
     if (isBoolean(results)) {
       if (results === false) {

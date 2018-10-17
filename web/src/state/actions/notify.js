@@ -1,4 +1,4 @@
-const scope = "navigation";
+const scope = "notify";
 
 export const notifyMessage = message => ({
   type: "notifyMessage",
