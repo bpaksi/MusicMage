@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { withState, compose } from "../withState";
+import { withStateScoped, compose } from "../withState";
 
 import Button from "@material-ui/core/Button";
 
@@ -99,6 +99,6 @@ Artist.propTypes = {
 };
 
 export default compose(
-  withState(),
+  withStateScoped("songs"),
   withStyles(styles)
 )(Artist);

@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { withState, compose } from "../withState";
+import { withActionsOnly, compose } from "../withState";
 
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
@@ -71,6 +71,6 @@ Song.propTypes = {
 };
 
 export default compose(
-  withState(),
+  withActionsOnly(),
   withStyles(styles)
 )(Song);

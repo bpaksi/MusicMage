@@ -1,6 +1,5 @@
 import React from "react";
-import { withStyles } from "@material-ui/core/styles";
-import { withState, compose } from "../withState";
+import { withActionsOnly } from "../withState";
 
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -18,47 +17,34 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 import { routes } from "../routes";
 
-const styles = theme => ({
-  card: {
-  }
-});
+const Library = ({ actions }) => (
+  <Card>
+    <CardHeader title="Library" />
+    <CardContent>
+      <List>
+        {Object.keys(routes).map(
+          route =>
+            routes[route].menu && (
+              <ListItem key={route}>
+                {routes[route].icon && (
+                  <ListItemAvatar>
+                    <Avatar>
+                      <Icon>{routes[route].icon}</Icon>
+                    </Avatar>
+                  </ListItemAvatar>
+                )}
+                <ListItemText primary={routes[route].label} />
+                <ListItemSecondaryAction>
+                  <IconButton onClick={() => actions.navigateTo(route)}>
+                    <ChevronRightIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            )
+        )}
+      </List>
+    </CardContent>
+  </Card>
+);
 
-class Library extends React.Component {
-  render() {
-    const { classes, actions } = this.props;
-    return (
-      <Card className={classes.card}>
-        <CardHeader title="Library" />
-        <CardContent>
-					<List>
-          {Object.keys(routes).map(
-            route =>
-              routes[route].menu && (
-                <ListItem key={route}>
-                  {routes[route].icon && (
-                    <ListItemAvatar>
-                      <Avatar>
-                        <Icon>{routes[route].icon}</Icon>
-                      </Avatar>
-                    </ListItemAvatar>
-                  )}
-                  <ListItemText primary={routes[route].label} />
-                  <ListItemSecondaryAction>
-                    <IconButton onClick={() => actions.navigateTo(route)}>
-                      <ChevronRightIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              )
-					)}
-					</List>
-        </CardContent>
-      </Card>
-    );
-  }
-}
-
-export default compose(
-  withState(),
-  withStyles(styles)
-)(Library);
+export default withActionsOnly()(Library);

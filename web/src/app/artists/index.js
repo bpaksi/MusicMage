@@ -1,6 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { withState, compose } from "../withState";
+import { withStateScoped, compose } from "../withState";
 
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -24,7 +24,7 @@ const styles = theme => ({
   }
 });
 
-class Library extends React.Component {
+class Artists extends React.Component {
   componentDidMount() {
     const { actions } = this.props;
 
@@ -46,7 +46,7 @@ class Library extends React.Component {
   };
 
   render() {
-    const { artists, classes } = this.props;
+		const { artists, classes } = this.props;
 
     return (
       <Card className={classes.card}>
@@ -78,7 +78,9 @@ class Library extends React.Component {
   }
 }
 
+
+
 export default compose(
-  withState(),
+  withStateScoped("artists"),
   withStyles(styles)
-)(Library);
+)(Artists);

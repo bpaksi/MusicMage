@@ -6,10 +6,9 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Header from "./header";
 import Navigation from "./navigation";
 import Client from "./client";
-import Notify from "./notify";
+import { Notify, ConfirmD } from "./util";
 
-const styles = theme => ({
-});
+const styles = theme => ({});
 
 class Body extends Component {
   componentDidMount() {
@@ -24,11 +23,12 @@ class Body extends Component {
   render() {
     return (
       <>
-				<CssBaseline />
+        <CssBaseline />
         <Header />
         <Navigation />
         <Client />
-				<Notify />
+        <ConfirmD />
+        <Notify />
       </>
     );
   }

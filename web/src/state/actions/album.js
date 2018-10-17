@@ -44,3 +44,7 @@ export const songAdded = song => ({
   parameters: { song },
   reduce: state => ({ songs: [...state.songs, song] })
 });
+
+export const songDelete = song => ({
+  type: "songDelete"
+});

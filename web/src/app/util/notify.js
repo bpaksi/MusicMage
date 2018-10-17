@@ -1,6 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { withState, compose } from "./withState";
+import { withStateScoped, compose } from "../withState";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -75,6 +75,6 @@ class Notify extends React.Component {
 }
 
 export default compose(
-  withState(),
+  withStateScoped("notify"),
   withStyles(styles)
 )(Notify);
