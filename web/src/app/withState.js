@@ -3,16 +3,9 @@ import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
 import * as actionMethods from "../state/actions";
 
-const defaultDispatch2Props = () => {
-  var actions;
-  return dispatch => {
-    if (!actions) {
-      actions = {...bindActionCreators(actionMethods, dispatch), dispatch};
-    }
-
-    return { actions };
-  };
-};
+const defaultDispatch2Props = () => dispatch => ({
+  actions: { ...bindActionCreators(actionMethods, dispatch), dispatch }
+});
 
 export function withState(mapStateToProps) {
   return Wrapped => {
@@ -24,7 +17,7 @@ export function withState(mapStateToProps) {
 }
 
 export function withStateScoped(scope) {
-	if (!scope) return withState();
+  if (!scope) return withState();
 
   return Wrapped => {
     return connect(

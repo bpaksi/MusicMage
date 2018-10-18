@@ -1,4 +1,4 @@
-import { webSocketSend } from "../actions/webSocket";
+import { webSocketSend } from "../actions";
 
 export default () => {
   var callbacks = [];
@@ -6,26 +6,11 @@ export default () => {
   return ({ getState, dispatch }) => next => action => {
     const { type, webSocketSend: payload, webSocketResults: callback } = action;
 
-    if (payload && isFunction(callback)) {
-      payload.returnKey = "%" + new Date().getTime() + "%";
-
-			callbacks = [...callbacks, { key: payload.returnKey, callback }];
-			
-
-			console.log("webSocketSend 1", {payload, callbacks})
-    }
-
     if (type === "webSocketMessage") {
-
-
-			const { returnKey, payload } = action.parameters.message;
+      const { returnKey, payload } = action.parameters.message;
 
       if (returnKey) {
-				console.log("webSocketSend 2", {action})
-
-
-
-				const index = callbacks.findIndex(i => i.key === returnKey);
+        const index = callbacks.findIndex(i => i.key === returnKey);
         if (index >= 0) {
           callbacks[index].callback({ getState, dispatch, payload });
 
@@ -36,6 +21,12 @@ export default () => {
           return false;
         }
       }
+    }
+
+    if (payload && isFunction(callback)) {
+      payload.returnKey = "%" + new Date().getTime() + "%";
+
+			callbacks = [...callbacks, { key: payload.returnKey, callback }];
     }
 
     const results = next(action);

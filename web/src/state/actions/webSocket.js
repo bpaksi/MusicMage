@@ -1,5 +1,4 @@
 // webSocket: {
-// 	url: "",
 // 	socket: null,
 // }
 
@@ -9,7 +8,6 @@ export const webSocketConnect = url => ({
   type: "webSocketConnect",
   parameters: { url },
   scope,
-  reduce: () => ({ url }),
   afterReduce: ({ dispatch }) => {
     try {
       const socket = new WebSocket(url);
@@ -55,7 +53,18 @@ const webSocketDisconnected = () => ({
   reduce: () => ({ socket: null })
 });
 
-export const webSocketSend = (payload) => {
+const webSocketMessage = message => ({
+  type: "webSocketMessage",
+  scope,
+  parameters: { message }
+});
+
+const webSocketError = (message, data) => ({
+  type: "webSocketError",
+  parameters: { message, data }
+});
+
+export const webSocketSend = payload => {
   return {
     type: "webSocketSend",
     scope,
@@ -65,17 +74,6 @@ export const webSocketSend = (payload) => {
     }
   };
 };
-
-const webSocketMessage = message => ({
-  type: "webSocketMessage",
-  scope,
-  parameters: { message },
-});
-
-const webSocketError = (message, data) => ({
-  type: "webSocketError",
-  parameters: { message, data }
-});
 
 const sendOnConnect = (getState, dispatch, payload, retrycount) => {
   const webSocket = getState();

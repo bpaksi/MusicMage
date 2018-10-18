@@ -1,6 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { withState, compose } from "./withState";
+import { withStateScoped, compose } from "./withState";
 
 // import Slide from "@material-ui/core/Slide";
 import Paper from "@material-ui/core/Paper";
@@ -37,6 +37,6 @@ class Client extends React.Component {
 }
 
 export default compose(
-  withState(),
+  withStateScoped("navigation"),
   withStyles(styles)
 )(Client);

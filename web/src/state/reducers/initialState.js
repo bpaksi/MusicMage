@@ -23,7 +23,6 @@ export const initialState = {
     onConfirm: null
   },
   webSocket: {
-    url: "",
     socket: null,
   }
 };

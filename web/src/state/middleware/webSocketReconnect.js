@@ -1,30 +1,19 @@
-import { webSocketConnect } from "../actions/webSocket";
+import { webSocketConnect } from "../actions";
 import { notifySuccess, notifyError } from "../actions/notify";
 import { navigateRefresh } from "../actions/navigation";
 
 export default () => {
+  var url = "";
   var forcedDisconnect = false;
   var attemptingReconnect = false;
 
-  return ({ getState, dispatch }) => next => action => {
-    const { type } = action;
+  return ({ dispatch }) => next => action => {
+    const { type, parameters } = action;
     const results = next(action);
 
     switch (type) {
-      case "webSocketDisconnect":
-        forcedDisconnect = true;
-        break;
-
-      case "webSocketDisconnected":
-        if (!forcedDisconnect) {
-          const { webSocket } = getState();
-          dispatch(notifyError("Lost server connection!"));
-
-          setTimeout(() => {
-            attemptingReconnect = true;
-            dispatch(webSocketConnect(webSocket.url));
-          }, 5000);
-        }
+      case "webSocketConnect":
+        url = parameters.url;
         break;
 
       case "webSocketConnected":
@@ -35,6 +24,21 @@ export default () => {
           attemptingReconnect = false;
         }
         forcedDisconnect = false;
+        break;
+
+      case "webSocketDisconnect":
+        forcedDisconnect = true;
+        break;
+
+      case "webSocketDisconnected":
+        if (!forcedDisconnect) {
+          dispatch(notifyError("Lost server connection!"));
+
+          setTimeout(() => {
+            attemptingReconnect = true;
+            dispatch(webSocketConnect(url));
+          }, 5000);
+        }
         break;
 
       default:

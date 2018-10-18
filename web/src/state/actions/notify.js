@@ -1,7 +1,7 @@
 const scope = "notify";
 
-export const notifyMessage = message => ({
-  type: "notifyMessage",
+export const notify = message => ({
+  type: "notify",
   ...createMessage(message)
 });
 

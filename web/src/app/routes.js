@@ -8,12 +8,12 @@ export const routes = {
   library: {
     label: "Library",
     icon: "library_music",
-    render: (key) => <Library key={key} />
+    render: ({key}) => <Library key={key} />
   },
   artists: {
     label: "Artists",
     icon: "people",
-    render: (key) => <Artists key={key} />,
+    render: ({key}) => <Artists key={key} />,
     menu: true
   },
   album: {
@@ -24,13 +24,13 @@ export const routes = {
   albums: {
     label: "Albums",
     icon: "album",
-    render: (key) => <Artists key={key} />,
+    render: ({key}) => <Artists key={key} />,
     menu: true
   },
   unassigned: {
     label: "Unassigned",
     icon: "error_outline",
-    render: (key) => <Unassigned key={key}/>,
+    render: ({key}) => <Unassigned key={key}/>,
     menu: true
   }
 };
