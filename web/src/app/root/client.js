@@ -1,11 +1,11 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { withStateScoped, compose } from "./withState";
+import { withStateScoped, compose } from "../util";
 
 // import Slide from "@material-ui/core/Slide";
 import Paper from "@material-ui/core/Paper";
 
-import { routes } from "./routes";
+import { routes } from "../routes";
 
 const styles = theme => ({
   paper: {

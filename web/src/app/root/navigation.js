@@ -1,12 +1,12 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { withState, compose } from "./withState";
+import { withState, compose } from "../util";
 
 import Icon from "@material-ui/core/Icon";
 import Step from "@material-ui/core/Step";
 import StepButton from "@material-ui/core/StepButton";
 import Stepper from "@material-ui/core/Stepper";
-import { routes } from "./routes";
+import { routes } from "../routes";
 
 const styles = {
   connector: {

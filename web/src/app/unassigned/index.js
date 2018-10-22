@@ -1,6 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { withState, compose } from "../withState";
+import { withState, compose } from "../util";
 
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -13,7 +13,7 @@ const styles = theme => ({
   }
 });
 
-class Library extends React.Component {
+class Unassigned extends React.Component {
   render() {
     const { classes } = this.props;
     return (
@@ -29,4 +29,4 @@ class Library extends React.Component {
 export default compose(
   withState(),
   withStyles(styles)
-)(Library);
+)(Unassigned);

@@ -2,6 +2,10 @@ export const initialState = {
   artists: [],
   songs: [],
 
+	genres: {
+		items: [] // []string
+	},
+
   navigation: {
     pageKey: 1,
     direction: "forward",

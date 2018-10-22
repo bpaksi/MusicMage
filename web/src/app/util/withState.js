@@ -1,7 +1,7 @@
 import React from "react";
 import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
-import * as actionMethods from "../state/actions";
+import * as actionMethods from "../../state/actions";
 
 const defaultDispatch2Props = () => dispatch => ({
   actions: { ...bindActionCreators(actionMethods, dispatch), dispatch }

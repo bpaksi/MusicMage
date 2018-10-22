@@ -1,5 +1,5 @@
 import React from "react";
-import { withActionsOnly } from "../withState";
+import { withActionsOnly } from "../util";
 
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";

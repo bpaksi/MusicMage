@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { withStateScoped, compose } from "../withState";
+import { withStateScoped, compose, IconButtonEx } from "../util";
+
+// import IconButton from "@material-ui/core/IconButton";
+
 
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -12,7 +15,6 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
 import PersonIcon from "@material-ui/icons/Person";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
@@ -36,7 +38,7 @@ class Artists extends React.Component {
     actions.artistUnsubscribe();
   }
 
-  onClick = artist => {
+  onClick = (artist) => {
     const { actions } = this.props;
 
     actions.navigateTo("album", {
@@ -65,9 +67,9 @@ class Artists extends React.Component {
                   secondary={artist.albumName}
                 />
                 <ListItemSecondaryAction>
-                  <IconButton onClick={() => this.onClick(artist)}>
+                  <IconButtonEx data={artist} onClick={this.onClick}>
                     <ChevronRightIcon />
-                  </IconButton>
+									</IconButtonEx>
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
