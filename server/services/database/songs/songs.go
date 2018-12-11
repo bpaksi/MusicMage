@@ -77,7 +77,7 @@ func (songs *Songs) onAddSongHandler(file *files.MusicFile) {
 	songs.Records = append(songs.Records, added)
 
 	for _, onChange := range songs.changeHandlers {
-		onChange.ChangeHandler(&Song{}, added)
+		onChange.ChangeHandler(nil, added)
 	}
 }
 
@@ -91,7 +91,7 @@ func (songs *Songs) onDeleteSongHandler(file *files.MusicFile) {
 		songs.Records = append(songs.Records[:idx], songs.Records[idx+1:]...)
 
 		for _, onChange := range songs.changeHandlers {
-			onChange.ChangeHandler(old, &Song{})
+			onChange.ChangeHandler(old, nil)
 		}
 	}
 }

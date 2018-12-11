@@ -6,14 +6,13 @@ func init() {
 	connection.Router.Handle("GENRES_FETCH", All)
 }
 
-// Fetch ...
+// All ...
 func All(client *connection.Client) {
 	genres := make([]string, 0)
 
 	for _, song := range client.Services.Database.Songs.Records {
 		genre := song.File.Genre()
 		if genre != "" {
-
 			if !contains(genres, genre) {
 				genres = append(genres, genre)
 			}

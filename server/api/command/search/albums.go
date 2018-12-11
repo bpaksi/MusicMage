@@ -2,6 +2,7 @@ package search
 
 import (
 	"github.com/bpaksi/MusicMage/server/api/connection"
+	"github.com/bpaksi/MusicMage/server/services/musicSearch/data"
 )
 
 type albumParams struct {
@@ -13,12 +14,13 @@ func init() {
 }
 
 // ForAlbums ...
-func ForAlbums(client *connection.Client, params albumParams) {
+func ForAlbums(client *connection.Client, params albumParams) data.AlbumRecords {
 	results, err := client.Services.Search.SearchForAlbums(params.Artist)
 	if err != nil {
 		client.Error(err.Error())
-		return
+
+		return nil
 	}
 
-	client.Send("SEARCH_ALBUM_RESULTS", results)
+	return results
 }

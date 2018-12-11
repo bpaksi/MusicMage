@@ -26,9 +26,9 @@ func OnSubscribe(client *connection.Client, params params) (bool, string) {
 	}
 
 	handlerKey := client.Services.Database.Songs.AddChangeHandler(func(old, new *songs.Song) {
-		if old.ID == 0 {
+		if old == nil {
 			filterWrite(client, "SONG_ADDED", new, params.Artist, params.Album)
-		} else if new.ID == 0 {
+		} else if new == nil {
 			filterWrite(client, "SONG_DELETED", old, params.Artist, params.Album)
 		} else {
 			filterWrite(client, "SONG_UPDATED", new, params.Artist, params.Album)

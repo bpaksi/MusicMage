@@ -1,21 +1,21 @@
 import { applyMiddleware } from "redux";
 import action from "./action";
 import logger from "./logger";
-import webSockSend from "./webSockSend";
+import webSocketSend from "./webSocketSend";
 import webSocketErrors from "./webSocketErrors";
 import webSocketReconnect from "./webSocketReconnect";
 
-import webSockResultToAction from "./webSockResultToAction";
+import webSocketResultToAction from "./webSocketResultToAction";
 
 import * as album from '../actions/album'
 import * as artist from '../actions/artist'
-
+import * as unassigned from '../actions/unassigned'
 
 export default applyMiddleware(
-  webSockSend(),
+  webSocketSend(),
   webSocketErrors(),
 	webSocketReconnect(),
-	webSockResultToAction(album, artist),
+	webSocketResultToAction(album, artist, unassigned),
   action(),
   logger()
 );

@@ -4,7 +4,7 @@ export default () => {
   var callbacks = [];
 
   return ({ getState, dispatch }) => next => action => {
-    const { type, webSocketSend: payload, webSocketResults: callback } = action;
+    const { type, webSocketSend: webSocketPayload, webSocketResults: callback } = action;
 
     if (type === "webSocketMessage") {
       const { returnKey, payload } = action.parameters.message;
@@ -23,16 +23,16 @@ export default () => {
       }
     }
 
-    if (payload && isFunction(callback)) {
-      payload.returnKey = "%" + new Date().getTime() + "%";
+    if (webSocketPayload && isFunction(callback)) {
+      webSocketPayload.returnKey = "%" + new Date().getTime() + "%";
 
-			callbacks = [...callbacks, { key: payload.returnKey, callback }];
+			callbacks = [...callbacks, { key: webSocketPayload.returnKey, callback }];
     }
 
     const results = next(action);
 
-    if (payload) {
-      dispatch(webSocketSend(payload));
+    if (webSocketPayload) {
+      dispatch(webSocketSend(webSocketPayload));
     }
 
     return results;

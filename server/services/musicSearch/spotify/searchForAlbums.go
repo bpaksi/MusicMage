@@ -2,6 +2,7 @@ package spotify
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/bpaksi/MusicMage/server/services/musicSearch/data"
 	"github.com/zmb3/spotify"
@@ -10,11 +11,17 @@ import (
 // SearchForAlbums ...
 func (api *API) SearchForAlbums(artist string) (results []data.AlbumRecord, err error) {
 
-	r, e := api.client.Search(artist, spotify.SearchTypePlaylist|spotify.SearchTypeAlbum)
-	if e != nil {
-		err = e
+	log.Printf("Spotify - SearchForAlbums: %s", artist)
+
+	var r *spotify.SearchResult
+	r, err = api.client.Search(artist, spotify.SearchTypeArtist|spotify.SearchTypeAlbum)
+	if err != nil {
+		log.Printf("Spotify - SearchForAlbums: error=%s", err.Error())
+
 		return
 	}
+
+	log.Printf("Spotify - SearchForAlbums: results=%+v", r)
 
 	// handle album results
 	if r.Albums != nil {

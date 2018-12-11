@@ -1,44 +1,46 @@
 import React from "react";
 
-
 class WithCustomData extends React.Component {
-	onClickEvent = () => {
-		const { onClick, data } = this.props;
+  onClickEvent = () => {
+    const { onClick, data } = this.props;
 
-		onClick(data);
-	};
+    onClick(data);
+  };
 
-	onChangeEvent = (e) => {
-		const { onChange, onChangeDivineValue, data } = this.props;
-		console.log('ClickEx - onChangeEvent: ', {data: e.target.value});
+  onChangeEvent = e => {
+    const { onChange, onChangeDivineValue, data } = this.props;
+    const value = onChangeDivineValue ? onChangeDivineValue(e) : e;
 
-		const value = onChangeDivineValue ? onChangeDivineValue(e) : e;
-
+    // console.log('WithCustomData - onChangeEvent: ', {data: e.target.value});
     onChange(value, data);
-	};
-	
+  };
 
   render() {
-		const { onClick, onChange, onChangeDivineValue, children, ...wrappedProps } = this.props;
+    const {
+      onClick,
+      onChange,
+      onChangeDivineValue,
+      children,
+      ...rest
+    } = this.props;
 
     if (onClick) {
-      wrappedProps.onClick = this.onClickEvent;
+      rest.onClick = this.onClickEvent;
     }
     if (onChange) {
-      wrappedProps.onChange = this.onChangeEvent;
+      rest.onChange = this.onChangeEvent;
     }
 
-    console.log("ClickEnhancer - render: ", wrappedProps);
-    return children(wrappedProps);
+    return children(rest);
   }
 }
 
 export function withCustomData(onChangeDivineValue) {
   return Wrapped => props => {
-		const { children, data } = props;
-		console.assert(data, "Props don't contain data.")
+    const { children, data } = props;
+    console.assert(data, "This component requires data to be passed.");
 
-		const newProps = {...props, onChangeDivineValue}
+    const newProps = { ...props, onChangeDivineValue };
 
     return (
       <WithCustomData {...newProps}>

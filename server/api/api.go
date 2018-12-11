@@ -15,6 +15,7 @@ import (
 	_ "github.com/bpaksi/MusicMage/server/api/command/genre"
 	_ "github.com/bpaksi/MusicMage/server/api/command/search"
 	_ "github.com/bpaksi/MusicMage/server/api/command/song"
+	_ "github.com/bpaksi/MusicMage/server/api/command/unassigned"
 )
 
 // API ...

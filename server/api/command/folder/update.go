@@ -1,6 +1,10 @@
 package folder
 
-import "github.com/bpaksi/MusicMage/server/api/connection"
+import (
+	"fmt"
+
+	"github.com/bpaksi/MusicMage/server/api/connection"
+)
 
 type params struct {
 	ID     int    `json:"id"`
@@ -15,5 +19,6 @@ func init() {
 
 // Update ...
 func Update(client *connection.Client, params params) {
-
+	fmt.Printf("folder - update: %+v", params)
+	fmt.Println()
 }

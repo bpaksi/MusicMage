@@ -93,6 +93,7 @@ func (files *Files) onFileAdded(fullPath string) {
 	supportedFile := ext == ".mp3" || ext == ".aiff" || ext == ".wav" || ext == ".mpeg-4" || ext == ".m4a"
 
 	if supportedFile {
+
 		f, err := OpenMusicFile(fullPath)
 		if err != nil {
 			badFile := BadMusicRecord{

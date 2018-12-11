@@ -19,8 +19,9 @@ type MusicFile struct {
 
 // OpenMusicFile ...
 func OpenMusicFile(fullPath string) (musicFile *MusicFile, err error) {
-	musicFile = &MusicFile{}
-	musicFile.FullPath = fullPath
+	musicFile = &MusicFile{
+		FullPath: fullPath,
+	}
 
 	var id3File *id3.File
 	id3File, err = id3.Open(fullPath)

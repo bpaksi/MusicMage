@@ -4,7 +4,6 @@ import { withStateScoped, compose, IconButtonEx } from "../util";
 
 // import IconButton from "@material-ui/core/IconButton";
 
-
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -38,7 +37,7 @@ class Artists extends React.Component {
     actions.artistUnsubscribe();
   }
 
-  onClick = (artist) => {
+  onClick = artist => {
     const { actions } = this.props;
 
     actions.navigateTo("album", {
@@ -48,7 +47,7 @@ class Artists extends React.Component {
   };
 
   render() {
-		const { artists, classes } = this.props;
+    const { artists, classes } = this.props;
 
     return (
       <Card className={classes.card}>
@@ -69,7 +68,7 @@ class Artists extends React.Component {
                 <ListItemSecondaryAction>
                   <IconButtonEx data={artist} onClick={this.onClick}>
                     <ChevronRightIcon />
-									</IconButtonEx>
+                  </IconButtonEx>
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
@@ -79,8 +78,6 @@ class Artists extends React.Component {
     );
   }
 }
-
-
 
 export default compose(
   withStateScoped("artists"),

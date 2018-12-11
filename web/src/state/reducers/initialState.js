@@ -1,7 +1,7 @@
 export const initialState = {
   artists: [],
   songs: [],
-
+	unassigned:[],
 	genres: {
 		items: [] // []string
 	},

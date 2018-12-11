@@ -82,7 +82,13 @@ func (router *RouterData) Route(client *Client, message Message) (err error) {
 		results := handler.Call(params)
 
 		if len(message.ReturnKey) > 0 {
-			client.SendWithReturnKey("*"+message.Type, message.ReturnKey, results)
+
+			var value interface{}
+			if len(results) > 0 {
+				value = results[0].Interface()
+			}
+
+			client.SendWithReturnKey("*"+message.Type, message.ReturnKey, value)
 		}
 
 		return
