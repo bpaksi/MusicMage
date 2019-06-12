@@ -7,7 +7,6 @@ import { withStateScoped, compose, IconButtonEx } from "../util";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
-
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -38,6 +37,7 @@ class Artists extends React.Component {
   }
 
   onClick = artist => {
+		// console.log('onClick: ', artist);
     const { actions } = this.props;
 
     actions.navigateTo("album", {

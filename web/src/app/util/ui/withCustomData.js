@@ -11,7 +11,11 @@ class WithCustomData extends React.Component {
     const { onChange, onChangeDivineValue, data } = this.props;
     const value = onChangeDivineValue ? onChangeDivineValue(e) : e;
 
-    // console.log('WithCustomData - onChangeEvent: ', {data: e.target.value});
+    // console.log("WithCustomData - onChangeEvent: ", {
+    //   e,
+    //   target: e.target,
+    //   data: e.target.value
+    // });
     onChange(value, data);
   };
 
@@ -37,13 +41,11 @@ class WithCustomData extends React.Component {
 
 export function withCustomData(onChangeDivineValue) {
   return Wrapped => props => {
-    const { children, data } = props;
-    console.assert(data, "This component requires data to be passed.");
-
-    const newProps = { ...props, onChangeDivineValue };
+    const { children, data, ...rest } = props;
+    console.assert(data, "This component requires [data] property.");
 
     return (
-      <WithCustomData {...newProps}>
+      <WithCustomData {...rest} data={data} onChangeDivineValue={onChangeDivineValue}>
         {wrappedProps => <Wrapped {...wrappedProps}>{children}</Wrapped>}
       </WithCustomData>
     );

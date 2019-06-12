@@ -12,7 +12,7 @@ class TrackChanges extends React.Component {
   };
 
   render() {
-    const { isDirty, children } = this.props;
+    const { dirty, children } = this.props;
     const styles = {
       container: {
         display: "flex",
@@ -33,7 +33,7 @@ class TrackChanges extends React.Component {
       <div style={styles.container}>
         {<div style={styles.wrapper}>{children}</div>}
         <div style={styles.undo}>
-          {isDirty && (
+          {dirty && (
             <Tooltip title="Undo">
               <IconButton style={styles.undoButton} onClick={this.onUndo}>
                 <Undo fontSize="small" color="primary" />
@@ -47,19 +47,18 @@ class TrackChanges extends React.Component {
 }
 
 TrackChanges.propTypes = {
-  isDirty: PropTypes.bool.isRequired,
+  dirty: PropTypes.bool.isRequired,
   onUndo: PropTypes.func.isRequired,
   data: PropTypes.object
 };
 
 export function withTrackChanges() {
   return Wrapped => props => {
-    const { isDirty, onUndo, ...otherProps } = props;
-    console.log("otherProps: ", otherProps);
+    const { dirty, onUndo, ...rest } = props;
 
     return (
-      <TrackChanges isDirty={isDirty} onUndo={onUndo} data={props.data}>
-        <Wrapped {...otherProps} />
+      <TrackChanges dirty={dirty} onUndo={onUndo} data={props.data}>
+        <Wrapped {...rest} />
       </TrackChanges>
     );
   };

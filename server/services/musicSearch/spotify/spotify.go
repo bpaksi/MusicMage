@@ -13,7 +13,7 @@ import (
 )
 
 const clientID = "936439a9c5344f10a9d19f1dae1d8994"
-const clientSecret = "e241466f1e784089810342a08458ded8"
+const clientSecret = "e3b355dec67d488481435a01bb95804c"
 
 // API ...
 type API struct {

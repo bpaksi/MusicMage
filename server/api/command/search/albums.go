@@ -15,6 +15,8 @@ func init() {
 
 // ForAlbums ...
 func ForAlbums(client *connection.Client, params albumParams) data.AlbumRecords {
+	// fmt.Printf("search.ForAlbums: %s\n", params.Artist)
+
 	results, err := client.Services.Search.SearchForAlbums(params.Artist)
 	if err != nil {
 		client.Error(err.Error())

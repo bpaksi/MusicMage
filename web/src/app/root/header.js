@@ -37,6 +37,13 @@ class Header extends React.Component {
     this.setState({ anchorEl: null });
   };
 
+  onSettingsOpen = () => {
+    const { actions } = this.props;
+
+    actions.navigateBack();
+    this.setState({ anchorEl: null });
+	};
+	
   render() {
     const { classes } = this.props;
     const { anchorEl } = this.state;
@@ -70,7 +77,7 @@ class Header extends React.Component {
             onClose={this.onMenuClose}
           >
             <MenuItem onClick={this.onMenuLibrary}>Library</MenuItem>
-            <MenuItem>Settings</MenuItem>
+            <MenuItem onClick={this.onSettings}>Settings</MenuItem>
           </Menu>
           <Typography variant="title" color="inherit">
             Music Mage

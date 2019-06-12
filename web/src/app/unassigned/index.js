@@ -31,7 +31,7 @@ const styles = theme => ({
 });
 
 class Unassigned extends React.Component {
-  state = {};
+  state = {searchOpen: false};
 
   componentDidMount() {
     const { actions } = this.props;
@@ -45,9 +45,10 @@ class Unassigned extends React.Component {
   }
 
   onSearch = () => {
-    this.setState(state => ({
-      searchOpen: !state.searchOpen
-    }));
+    this.setState({searchOpen: true});
+  };
+  onSearchClose = () => {
+    this.setState({searchOpen: false});
   };
 
   render() {
@@ -90,7 +91,7 @@ class Unassigned extends React.Component {
 
         <TableEx data={unassigned} columns={columns} />
 
-        <Search open={searchOpen} />
+        <Search open={searchOpen} onClose={this.onSearchClose} />
       </>
     );
   }

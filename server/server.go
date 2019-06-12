@@ -31,7 +31,7 @@ func main() {
 	startWebServer(services)
 	startStaticFileServer()
 
-	http.ListenAndServe("localhost:4000", nil)
+	http.ListenAndServe("localhost:4001", nil)
 }
 
 func startWebServer(services services.Services) {

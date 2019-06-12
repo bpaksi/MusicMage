@@ -42,3 +42,14 @@ export const unassignedUpdated = song => ({
   type: "unassignedUpdated",
   parameters: { song }
 });
+
+export const searchForArtist = artist => ({
+  type: "unassignedUpdated",
+  parameters: { artist },
+  webSocketSend: {
+    type: "SEARCH_ALBUM",
+    payload: {
+      artist
+    }
+  }
+});

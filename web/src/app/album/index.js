@@ -107,7 +107,7 @@ class Artist extends React.Component {
 
     return {
       song: { ...song, ...dirtySong },
-      isDirty: field => field in dirtySong
+      dirty: field => field in dirtySong
     };
   };
 
@@ -141,14 +141,14 @@ class Artist extends React.Component {
       {
         id: "title",
         label: "Title",
-        render: ({ song, isDirty }) => (
+        render: ({ song, dirty }) => (
           <TextFieldWithChanges
             value={song.title}
             fullWidth={true}
             data={{ id: song.id, field: "title" }}
             onChange={this.onChange}
             onUndo={this.onUndo}
-            isDirty={isDirty("title")}
+            dirty={dirty("title")}
           >
             song.title
           </TextFieldWithChanges>
@@ -157,14 +157,14 @@ class Artist extends React.Component {
       {
         id: "genre",
         label: "Genre",
-        render: ({ song, isDirty }) => (
+        render: ({ song, dirty }) => (
           <SelectWithChanges
             native
             value={song.genre}
             data={{ id: song.id, field: "genre" }}
             onChange={this.onChange}
             onUndo={this.onUndo}
-            isDirty={isDirty("genre")}
+            dirty={dirty("genre")}
           >
             <option />
             <option>Rock</option>
@@ -177,7 +177,7 @@ class Artist extends React.Component {
         id: "year",
         label: "Year",
         numeric: true,
-        render: ({ song, isDirty }) => (
+        render: ({ song, dirty }) => (
           <TextFieldWithChanges
             value={song.year}
             type="number"
@@ -185,7 +185,7 @@ class Artist extends React.Component {
             data={{ id: song.id, field: "year" }}
             onChange={this.onChange}
             onUndo={this.onUndo}
-            isDirty={isDirty("year")}
+            dirty={dirty("year")}
           >
             song.title
           </TextFieldWithChanges>
