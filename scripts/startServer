@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# stop existing processes
+ps -ax | grep "run server.go" | awk '{print $1}' | xargs kill > /dev/null 2>&1
+ps -ax | grep "gin-bin server.go" | awk '{print $1}' | xargs kill > /dev/null 2>&1
+
+path=$GOPATH/src/github.com/bpaksi/musicmage
+
+# start server
+cd $path/server
+gin -p=4000 -a=4001 run server.go

@@ -5,18 +5,18 @@ import {
   withStateScoped,
   compose,
   TableEx,
-  SelectWithChanges,
-  TextFieldWithChanges
+  // SelectWithChanges,
+  // TextFieldWithChanges
 } from "../util";
 
 import Button from "@material-ui/core/Button";
-import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField";
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import AppBar from "@material-ui/core/AppBar";
+// import MenuItem from "@material-ui/core/MenuItem";
+// import TextField from "@material-ui/core/TextField";
+// import Card from "@material-ui/core/Card";
+// import CardHeader from "@material-ui/core/CardHeader";
+// import CardActions from "@material-ui/core/CardActions";
+// import CardContent from "@material-ui/core/CardContent";
+// import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
@@ -52,7 +52,7 @@ class Unassigned extends React.Component {
   };
 
   render() {
-    const { classes, unassigned } = this.props;
+    const { unassigned } = this.props;
     const { searchOpen } = this.state;
 
     console.log("Unassigned - render", unassigned);

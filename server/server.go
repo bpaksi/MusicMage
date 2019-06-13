@@ -9,6 +9,7 @@ import (
 	"github.com/bpaksi/MusicMage/server/services"
 	"github.com/bpaksi/MusicMage/server/services/database"
 	"github.com/bpaksi/MusicMage/server/services/musicSearch"
+	"github.com/bpaksi/MusicMage/server/tools/logger"
 
 	"github.com/bpaksi/MusicMage/server/api"
 )
@@ -20,6 +21,7 @@ func main() {
 		}
 	}()
 
+	logger.Init()
 	log.Println("Music Mage server started")
 
 	var services services.Services

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+ps -ax | grep "react-scripts start" | awk '{print $1}' | xargs kill > /dev/null 2>&1
+ps -ax | grep "react-scripts/scripts/start.js" | awk '{print $1}' | xargs kill > /dev/null 2>&1
+
+path=$GOPATH/src/github.com/bpaksi/musicmage
+
+# start client
+cd $path/web
+npm start

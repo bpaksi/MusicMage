@@ -1,0 +1,9 @@
+#!/bin/bash
+
+clear
+
+logPath=~/Library/Logs/MusicMage/log.txt
+
+#rm $logPath
+#touch $logPath
+tail -f $logPath
