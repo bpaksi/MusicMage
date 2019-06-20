@@ -1,9 +1,5 @@
 package messagebus
 
-type SubscriptionHandler1 func(Message)
-type SubscriptionHandler2 func(interface{})
-type SubscriptionHandler3 func(clientID int64, params interface{})
-
 // Subscription ...
 type Subscription interface {
 	// Unsubscribe unsubscribe handler from the given topic
@@ -12,14 +8,14 @@ type Subscription interface {
 
 type messageBusHandler struct {
 	ID     int64
-	Func   SubscriptionHandler1
+	Func   func(Message)
 	Filter string
 }
 
 // SubscribeAll ...
-func SubscribeAll(handler SubscriptionHandler1) Subscription {
-	return subscribe("", handler)
-}
+// func SubscribeAll(handler func(Message)) Subscription {
+// 	return subscribe("", handler)
+// }
 
 // Subscribe ...
 func Subscribe(msgType string, handler interface{}) Subscription {
@@ -34,7 +30,7 @@ func SubscribeWithClientID(msgType string, handler interface{}) Subscription {
 	return subscribe(msgType, proxy.Call)
 }
 
-func subscribe(msgType string, handler SubscriptionHandler1) Subscription {
+func subscribe(msgType string, handler func(Message)) Subscription {
 	bus.lock.Lock()
 	defer bus.lock.Unlock()
 

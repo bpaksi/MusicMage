@@ -16,14 +16,13 @@ import (
 	"github.com/bpaksi/MusicMage/server/api/connection"
 )
 
-// API ...
-type API struct {
+type api struct {
 	upgrader websocket.Upgrader
 }
 
 // NewAPI ...
 func NewAPI() http.Handler {
-	var api API
+	var api api
 	api.upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -33,7 +32,7 @@ func NewAPI() http.Handler {
 }
 
 // ServeHTTP ...
-func (api *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (api *api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	socket, err := api.upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

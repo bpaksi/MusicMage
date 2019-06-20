@@ -2,6 +2,7 @@ package logger
 
 import (
 	"log"
+	"path"
 
 	"os/user"
 
@@ -28,7 +29,5 @@ func Init() {
 
 func getFileName() string {
 	usr, _ := user.Current()
-	dir := usr.HomeDir
-
-	return dir + "/Library/Logs/MusicMage/log.txt"
+	return path.Join(usr.HomeDir, "Library", "Logs", "MusicMage", "log.txt")
 }

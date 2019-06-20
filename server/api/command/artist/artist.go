@@ -20,13 +20,19 @@ func init() {
 func onSubscribe(clientID int64, artist string) {
 	log.Printf("artist.onSubscribe: %s (%d)", artist, clientID)
 
-	connection.Subscriptions.Add(clientID, "Artist", artist)
+	connection.Subscriptions.Add(clientID, subscriptionName, artist)
+
+	// all := database.GetArtists().All()
+
+	// for _, artist := range all {
+
+	// }
 }
 
 func onUnsubscribe(clientID int64) {
 	log.Printf("artist.onUnsubscribe: %d", clientID)
 
-	connection.Subscriptions.Remove(clientID, "Artist")
+	connection.Subscriptions.Remove(clientID, subscriptionName)
 
 }
 

@@ -6,10 +6,8 @@ import (
 	"os/user"
 	"path"
 
-	"github.com/bpaksi/MusicMage/server/services"
-	"github.com/bpaksi/MusicMage/server/services/database"
-	"github.com/bpaksi/MusicMage/server/services/musicSearch"
 	"github.com/bpaksi/MusicMage/server/tools/logger"
+	"github.com/bpaksi/MusicMage/server/tools/messagebus"
 
 	"github.com/bpaksi/MusicMage/server/api"
 )
@@ -24,16 +22,16 @@ func main() {
 	logger.Init()
 	log.Println("Music Mage server started")
 
-	var services services.Services
-
-	root := getRepositoryFolder()
-	services.Database = database.NewDatabase(root)
-	services.Search = musicSearch.Create()
-
+	startDatabase()
 	startWebServer()
 	startStaticFileServer()
 
 	http.ListenAndServe("localhost:4001", nil)
+}
+
+func startDatabase() {
+	root := getRepositoryFolder()
+	messagebus.Publish("DATABASE_STARTUP", root)
 }
 
 func startWebServer() {
@@ -51,7 +49,9 @@ func getRepositoryFolder() string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// fmt.Println(path.Join(usr.HomeDir, "/music/my music test"))
 
-	return path.Join(usr.HomeDir, "/music/my music test")
+	path := path.Join(usr.HomeDir, "music", "my music test")
+	// log.Printf("\tRepository path: %s", path)
+
+	return path
 }

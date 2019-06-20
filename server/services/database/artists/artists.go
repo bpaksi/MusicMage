@@ -15,27 +15,36 @@ type ArtistChanged struct {
 	New Artist
 }
 
-// Artists ...
-type Artists struct {
+// ArtistList ...
+type ArtistList struct {
 	lock    sync.RWMutex
 	records []Artist
 
 	identiy *tools.IdentityGenerator
 }
 
+var Artists *ArtistList
+
 func init() {
-	artists := &Artists{
+	Artists := &ArtistList{
 		records: make([]Artist, 0),
 		identiy: tools.NewIdentityGenerator(),
 	}
 
-	messagebus.Subscribe("SONG_ADDED", artists.onAddSong)
-	messagebus.Subscribe("SONG_DELETED", artists.onDeleteSong)
-	messagebus.Subscribe("SONG_CHANGED", artists.onChangeSong)
+	messagebus.Subscribe("SONG_ADDED", Artists.onAddSong)
+	messagebus.Subscribe("SONG_DELETED", Artists.onDeleteSong)
+	messagebus.Subscribe("SONG_CHANGED", Artists.onChangeSong)
 }
 
+func (artists *ArtistList) All() []Artist {
+	artists.lock.RLock()
+	defer artists.lock.RUnlock()
 
-func (artists *Artists) onAddSong(song songs.Song) {
+	return artists.records
+
+}
+
+func (artists *ArtistList) onAddSong(song songs.Song) {
 	artists.lock.Lock()
 	defer artists.lock.Unlock()
 
@@ -72,7 +81,7 @@ func (artists *Artists) onAddSong(song songs.Song) {
 	})
 }
 
-func (artists *Artists) onDeleteSong(song songs.Song) {
+func (artists *ArtistList) onDeleteSong(song songs.Song) {
 	artists.lock.Lock()
 	defer artists.lock.Unlock()
 
@@ -101,14 +110,14 @@ func (artists *Artists) onDeleteSong(song songs.Song) {
 	}
 }
 
-func (artists *Artists) onChangeSong(changed songs.SongChanged) {
+func (artists *ArtistList) onChangeSong(changed songs.SongChanged) {
 	if changed.Old.Artist != changed.New.Artist || changed.Old.Album != changed.New.Album {
 		artists.onAddSong(changed.New)
 		artists.onDeleteSong(changed.Old)
 	}
 }
 
-func (artists *Artists) find(artist, album string) (idx int, ok bool) {
+func (artists *ArtistList) find(artist, album string) (idx int, ok bool) {
 	ok = false
 	for idx = range artists.records {
 		if artists.records[idx].Name == artist &&
