@@ -8,9 +8,7 @@ export const searchForAlbums = (artist) => ({
       artist,
     }
   },
-  webSocketResults: ({ dispatch, payload }) => {
-    dispatch(searchForAlbumsResult(payload));
-  }
+
 });
 
 export const searchForAlbumsResult = (results) => ({

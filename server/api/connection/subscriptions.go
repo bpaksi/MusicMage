@@ -1,58 +1,111 @@
 package connection
 
+import (
+	"fmt"
+	"sync"
+
+	"github.com/bpaksi/MusicMage/server/tools/messagebus"
+)
+
+type Subscription struct {
+	ClientID int64
+	Name     string
+	Data     interface{}
+}
+
+// SubscriptionList ...
+type SubscriptionList struct {
+	lock sync.RWMutex
+	all  []*Subscription
+}
+
 // Subscriptions ...
-type Subscriptions struct {
-	all []Subscription
-}
+var Subscriptions *SubscriptionList
 
-// ClientDisconnectHandler ...
-type ClientDisconnectHandler func()
-
-func newSubscriptions() *Subscriptions {
-	var subscriptions Subscriptions
-	subscriptions.all = make([]Subscription, 0)
-
-	return &subscriptions
-}
-
-// Contains ...
-func (s *Subscriptions) Contains(name string) bool {
-	for _, sub := range s.all {
-		if sub.Name == name {
-			return true
-		}
+func init() {
+	Subscriptions = &SubscriptionList{
+		all: make([]*Subscription, 0),
 	}
 
-	return false
+	messagebus.Subscribe("CLIENT_CONNECTION_CLOSED", Subscriptions.onConnectionClosed)
 }
 
-// Track ...
-func (s *Subscriptions) Track(name string, unsubscribe SubscriptionUnsubscribeHandler) *Subscription {
-	var newSubscription Subscription
-	newSubscription.Name = name
-	newSubscription.UnsubscribeHander = unsubscribe
-	s.all = append(s.all, newSubscription)
+// Add ...
+func (obj *SubscriptionList) Add(clientID int64, name string, data interface{}) (err error) {
+	obj.lock.Lock()
+	defer obj.lock.Unlock()
 
-	return &s.all[len(s.all)-1]
+	if _, ok := obj.find(clientID, name); ok {
+		err = fmt.Errorf("Subscription %s already exists for client %d", name, clientID)
+		return
+	}
+
+	obj.all = append(obj.all, &Subscription{
+		ClientID: clientID,
+		Name:     name,
+		Data:     data,
+	})
+
+	return
 }
 
-// Disconnect ...
-func (s *Subscriptions) Disconnect(name string) {
-	for idx, subscription := range s.all {
-		if subscription.Name == name {
-			subscription.Unsubscribe()
+// Remove ...
+func (obj *SubscriptionList) Remove(clientID int64, name string) (err error) {
+	obj.lock.Lock()
+	defer obj.lock.Unlock()
 
-			s.all = append(s.all[:idx], s.all[idx+1:]...)
+	if _, ok := obj.find(clientID, name); !ok {
+		err = fmt.Errorf("Subscription %s doesn not exists for client %d", name, clientID)
+		return
+	}
+
+	for i, subscription := range obj.all {
+		if subscription.ClientID == clientID && subscription.Name == name {
+			obj.all = append(obj.all[:i], obj.all[i+1:]...)
 			break
 		}
 	}
+	return
 }
 
-// DisconnectAll ...
-func (s *Subscriptions) DisconnectAll() {
-	for _, subscription := range s.all {
-		subscription.Unsubscribe()
+// List ...
+func (obj *SubscriptionList) List(name string) (subscriptions []*Subscription) {
+	obj.lock.RLock()
+	defer obj.lock.RUnlock()
+
+	subscriptions = make([]*Subscription, 0)
+	for _, subscription := range obj.all {
+		if subscription.Name == name {
+			subscriptions = append(subscriptions, subscription)
+		}
 	}
 
-	s.all = make([]Subscription, 0)
+	return
+}
+
+func (obj *SubscriptionList) find(clientID int64, name string) (subscription *Subscription, ok bool) {
+	ok = false
+	for _, subscription = range obj.all {
+		if subscription.ClientID == clientID && subscription.Name == name {
+			ok = true
+			return
+		}
+	}
+
+	subscription = nil
+	return
+}
+
+func (obj *SubscriptionList) onConnectionClosed(clientID int64) {
+	obj.lock.Lock()
+	defer obj.lock.Unlock()
+
+	for i := len(obj.all) - 1; i >= 0; i-- {
+		subscription := obj.all[i]
+
+		if subscription.ClientID == clientID {
+
+			obj.all = append(obj.all[:i], obj.all[i+1:]...)
+		}
+	}
 }

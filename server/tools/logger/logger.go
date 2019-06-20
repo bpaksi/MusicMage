@@ -19,7 +19,7 @@ func Init() {
 		MaxAge:     28,   //days
 		Compress:   true, // disabled by default
 	}
-	logFileWriter.Rotate()
+	// logFileWriter.Rotate()
 
 	log.SetOutput(&logFileWriter)
 

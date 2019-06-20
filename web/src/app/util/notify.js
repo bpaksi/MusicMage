@@ -15,7 +15,7 @@ const styles = theme => ({
     backgroundColor: "green"
   },
   close: {
-    padding: theme.spacing.unit / 2
+    // padding: theme.spacing.unit / 2
   }
 });
 

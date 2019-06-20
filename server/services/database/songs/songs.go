@@ -1,125 +1,121 @@
 package songs
 
 import (
+	"log"
+	"path/filepath"
+	"strings"
 	"sync"
 
-	"github.com/bpaksi/MusicMage/server/services/database/files"
 	"github.com/bpaksi/MusicMage/server/tools"
+	"github.com/bpaksi/MusicMage/server/tools/messagebus"
 )
-
-// ChangeHandler ...
-type ChangeHandler func(old, current *Song)
-
-type registeredChangeHander struct {
-	Key           int64
-	ChangeHandler ChangeHandler
-}
 
 // Songs ...
 type Songs struct {
-	sync.RWMutex
-	Records []*Song
-
+	lock    sync.RWMutex
 	identiy *tools.IdentityGenerator
 
-	changeHandlerKeyGenerator *tools.IdentityGenerator
-	changeHandlers            []registeredChangeHander
+	records  []*Song
+	badFiles []*badMusicRecord
 }
 
-// NewSongIndex ...
-func NewSongIndex(files *files.Files) *Songs {
-	songs := &Songs{}
-	songs.Records = make([]*Song, 0)
-	songs.identiy = tools.NewIdentityGenerator()
-	songs.changeHandlerKeyGenerator = tools.NewIdentityGenerator()
-	songs.changeHandlers = make([]registeredChangeHander, 0)
+type badMusicRecord struct {
+	FilePath string
 
-	files.OnAdd(songs.onAddSongHandler)
-	files.OnDelete(songs.onDeleteSongHandler)
-	files.OnChange(songs.onChangeSongHandler)
-	return songs
+	Err error
 }
 
-// AddChangeHandler ...
-func (songs *Songs) AddChangeHandler(handler ChangeHandler) (key int64) {
-	key = songs.changeHandlerKeyGenerator.Next()
+// SongChanged ...
+type SongChanged struct {
+	Old Song
+	New Song
+}
 
-	h := registeredChangeHander{
-		Key:           key,
-		ChangeHandler: handler,
+func init() {
+	songs := &Songs{
+		records:  make([]*Song, 0),
+		badFiles: make([]*badMusicRecord, 0),
 	}
 
-	songs.changeHandlers = append(songs.changeHandlers, h)
-	return
+	messagebus.Subscribe("FILE_ADDED", songs.onFileAdded)
+	messagebus.Subscribe("FILE_DELETED", songs.onFileDeleted)
+	messagebus.Subscribe("FILE_CHANGED", songs.onFileChanged)
 }
 
-// RemoveChangeHandler ...
-func (songs *Songs) RemoveChangeHandler(key int64) bool {
-	for i, hndlr := range songs.changeHandlers {
-		if hndlr.Key == key {
-			songs.changeHandlers = append(songs.changeHandlers[:i], songs.changeHandlers[i+1:]...)
-			return true
-		}
+func (songs *Songs) onFileChanged(fullPath string) {
+	if !isSupported(fullPath) {
+		return
 	}
 
-	return false
-}
+	songs.lock.Lock()
+	defer songs.lock.Unlock()
 
-func (songs *Songs) onAddSongHandler(file *files.MusicFile) {
-	songs.Lock()
-	defer songs.Unlock()
+	for idx, old := range songs.records {
+		if old.FullPath == fullPath {
+			song, ferr := OpenMusicFile(fullPath)
+			if ferr != nil {
+				log.Panicln("not implemented")
+				return
+			}
+			song.ID = songs.identiy.Next()
 
-	added := &Song{
-		ID:   songs.identiy.Next(),
-		File: file,
-	}
-
-	songs.Records = append(songs.Records, added)
-
-	for _, onChange := range songs.changeHandlers {
-		onChange.ChangeHandler(nil, added)
-	}
-}
-
-func (songs *Songs) onDeleteSongHandler(file *files.MusicFile) {
-	songs.Lock()
-	defer songs.Unlock()
-
-	if idx, ok := songs.find(file.FullPath); ok {
-		old := songs.Records[idx]
-
-		songs.Records = append(songs.Records[:idx], songs.Records[idx+1:]...)
-
-		for _, onChange := range songs.changeHandlers {
-			onChange.ChangeHandler(old, nil)
+			songs.records[idx] = &song
+			messagebus.Publish("SONG_CHANGED", SongChanged{
+				Old: *old,
+				New: *songs.records[idx],
+			})
+			break
 		}
 	}
 }
 
-func (songs *Songs) onChangeSongHandler(old, new *files.MusicFile) {
-	if idx, ok := songs.find(old.FullPath); ok {
-		old := songs.Records[idx]
-		added := &Song{
-			ID:   old.ID,
-			File: new,
-		}
+func (songs *Songs) onFileAdded(fullPath string) {
+	if !isSupported(fullPath) {
+		return
+	}
 
-		songs.Records[idx] = added
+	songs.lock.Lock()
+	defer songs.lock.Unlock()
 
-		for _, onChange := range songs.changeHandlers {
-			onChange.ChangeHandler(old, added)
-		}
+	song, err := OpenMusicFile(fullPath)
+	if err != nil {
+		songs.badFiles = append(songs.badFiles, &badMusicRecord{
+			FilePath: fullPath,
+			Err:      err,
+		})
+	} else {
+		songs.records = append(songs.records, &song)
+
+		messagebus.Publish("SONG_ADDED", song)
 	}
 }
 
-func (songs *Songs) find(fullPath string) (idx int, ok bool) {
-	ok = false
-	for idx = range songs.Records {
-		if songs.Records[idx].File.FullPath == fullPath {
-			ok = true
+func (songs *Songs) onFileDeleted(fullPath string) {
+	if !isSupported(fullPath) {
+		return
+	}
+
+	songs.lock.Lock()
+	defer songs.lock.Unlock()
+
+	for idx, old := range songs.records {
+		if old.FullPath == fullPath {
+			songs.records = append(songs.records[:idx], songs.records[idx+1:]...)
+
+			messagebus.Publish("SONG_DELTED", *old)
 			break
 		}
 	}
 
-	return
+	for idx, old := range songs.badFiles {
+		if old.FilePath == fullPath {
+			songs.badFiles = append(songs.badFiles[idx:], songs.badFiles[:idx+1]...)
+			break
+		}
+	}
+}
+
+func isSupported(fullPath string) bool {
+	ext := strings.ToLower(filepath.Ext(fullPath))
+	return ext == ".mp3" || ext == ".aiff" || ext == ".wav" || ext == ".mpeg-4" || ext == ".m4a"
 }

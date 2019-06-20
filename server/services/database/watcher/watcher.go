@@ -1,27 +1,16 @@
 package watcher
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/bpaksi/MusicMage/server/tools/messagebus"
+
 	"github.com/fsnotify/fsnotify"
 )
-
-// FileAddedHandler ...
-type FileAddedHandler func(fullPath string)
-
-// FileDeletedHandler ...
-type FileDeletedHandler func(fullPath string)
-
-// FileChangedHandler ...
-type FileChangedHandler func(fullPath string)
-
-// FolderDeletedHandler ...
-type FolderDeletedHandler func(fullPath string)
 
 // Watcher ...
 type Watcher struct {
@@ -30,52 +19,39 @@ type Watcher struct {
 
 	stop       chan bool
 	rootFolder string
-
-	onFileAddedHandlers     []FileAddedHandler
-	onFileDeletedHandlers   []FileDeletedHandler
-	onFileChangedHandlers   []FileChangedHandler
-	onFolderDeletedHandlers []FolderDeletedHandler
 }
 
-// NewWatcher ...
-func NewWatcher() *Watcher {
-	return &Watcher{
-		isWatching:              false,
-		stop:                    make(chan bool),
-		onFileAddedHandlers:     make([]FileAddedHandler, 0),
-		onFileDeletedHandlers:   make([]FileDeletedHandler, 0),
-		onFileChangedHandlers:   make([]FileChangedHandler, 0),
-		onFolderDeletedHandlers: make([]FolderDeletedHandler, 0),
+func init() {
+	watcher := Watcher{
+		isWatching: false,
+		stop:       make(chan bool),
 	}
+
+	messagebus.Subscribe("DATABASE_STARTUP", watcher.onStart)
+	messagebus.Subscribe("DATABASE_SHUTDOWN", watcher.onStop)
 }
 
-// Start ...
-func (watcher *Watcher) Start(rootFolder string) (err error) {
+func (watcher *Watcher) onStart(rootFolder string) {
 	if watcher.isWatching {
-		err = fmt.Errorf("Can not start when already running")
+		log.Println("Can not start when already running")
 		return
 	}
+
+	var err error
 
 	watcher.isWatching = true
 	watcher.rootFolder = rootFolder
 	watcher.watcher, err = fsnotify.NewWatcher()
 	if err != nil {
+		log.Println(err.Error())
 		return
 	}
 
 	watcher.initWatcher(rootFolder)
 	go watcher.watch()
-	return
 }
 
-// IsWatching ...
-func (watcher *Watcher) IsWatching() (isWatching bool) {
-	isWatching = watcher.isWatching
-	return
-}
-
-// Stop ...
-func (watcher *Watcher) Stop() (err error) {
+func (watcher *Watcher) onStop() {
 	if watcher.isWatching {
 		watcher.isWatching = false
 		watcher.watcher.Close()
@@ -83,31 +59,9 @@ func (watcher *Watcher) Stop() (err error) {
 		select {
 		case <-watcher.stop:
 		case <-time.After(10 * time.Second):
-			err = fmt.Errorf("Error stoping file watcher")
+			log.Println("Error stoping file watcher")
 		}
 	}
-
-	return
-}
-
-// OnFileAdded ...
-func (watcher *Watcher) OnFileAdded(handler FileAddedHandler) {
-	watcher.onFileAddedHandlers = append(watcher.onFileAddedHandlers, handler)
-}
-
-// OnFileChanged ...
-func (watcher *Watcher) OnFileChanged(handler FileChangedHandler) {
-	watcher.onFileChangedHandlers = append(watcher.onFileChangedHandlers, handler)
-}
-
-// OnFileDeleted ...
-func (watcher *Watcher) OnFileDeleted(handler FileDeletedHandler) {
-	watcher.onFileDeletedHandlers = append(watcher.onFileDeletedHandlers, handler)
-}
-
-// OnFolderDeleted ...
-func (watcher *Watcher) OnFolderDeleted(handler FolderDeletedHandler) {
-	watcher.onFolderDeletedHandlers = append(watcher.onFolderDeletedHandlers, handler)
 }
 
 func (watcher *Watcher) watch() {
@@ -150,9 +104,7 @@ func (watcher *Watcher) initWatcher(root string) {
 			if info.IsDir() {
 				watcher.watcher.Add(path)
 			} else {
-				for _, onFileAdded := range watcher.onFileAddedHandlers {
-					onFileAdded(path)
-				}
+				messagebus.Publish("FILE_ADDED", path)
 			}
 
 			return
@@ -193,9 +145,7 @@ func (watcher *Watcher) processFileChanged(event fsnotify.Event) {
 			log.Println("File Deleted (" + event.Name + ")")
 
 			watcher.watcher.Remove(event.Name)
-			for _, onFolderDeleted := range watcher.onFolderDeletedHandlers {
-				onFolderDeleted(event.Name)
-			}
+			messagebus.Publish("FOLDER_DELETED", event.Name)
 		}
 
 	} else { // Is a file
@@ -204,30 +154,21 @@ func (watcher *Watcher) processFileChanged(event fsnotify.Event) {
 			{
 				rel, _ := filepath.Rel(watcher.rootFolder, event.Name)
 				log.Println("File Added (" + rel + ")")
-
-				for _, onFileAdded := range watcher.onFileAddedHandlers {
-					onFileAdded(event.Name)
-				}
+				messagebus.Publish("FILE_ADDED", event.Name)
 			}
 
 		case isDeleted:
 			{
 				rel, _ := filepath.Rel(watcher.rootFolder, event.Name)
 				log.Println("File Deleted (" + rel + ")")
-
-				for _, onFileDeleted := range watcher.onFileDeletedHandlers {
-					onFileDeleted(event.Name)
-				}
+				messagebus.Publish("FILE_DELETED", event.Name)
 			}
 
 		default:
 			{
 				rel, _ := filepath.Rel(watcher.rootFolder, event.Name)
 				log.Println("File Changed (" + rel + ")")
-
-				for _, onFileChanged := range watcher.onFileChangedHandlers {
-					onFileChanged(event.Name)
-				}
+				messagebus.Publish("FILE_CHANGED", event.Name)
 			}
 		}
 	}

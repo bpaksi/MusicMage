@@ -38,9 +38,9 @@ export const webSocketDisconnect = () => ({
   scope,
   afterReduce: ({ getState, dispatch }) => {
     try {
-      const webSocket = getState();
+      const state = getState();
 
-      webSocket.socket.close();
+      state.socket.close();
     } catch (err) {
       dispatch(webSocketError("Web Socket error while closing", err));
     }

@@ -1,10 +1,10 @@
 package artist
 
-import (
-	"github.com/bpaksi/MusicMage/server/api/connection"
-)
+// import (
+// 	"github.com/bpaksi/MusicMage/server/api/connection"
+// )
 
-// OnUnsubscribe ...
-func OnUnsubscribe(client *connection.Client) {
-	client.Subscriptions.Disconnect(subscriptionName)
-}
+// // OnUnsubscribe ...
+// func OnUnsubscribe(client *connection.Client) {
+// 	client.Subscriptions.Disconnect(subscriptionName)
+// }

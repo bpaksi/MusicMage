@@ -9,9 +9,7 @@ export const unassignedSubscribe = (artist, album) => ({
       album
     }
   },
-  webSocketResults: ({ dispatch, results }) => {
-    dispatch(unassignedSubscribed(results));
-  }
+
 });
 
 export const unassignedUnsubscribe = () => ({

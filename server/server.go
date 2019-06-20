@@ -30,14 +30,14 @@ func main() {
 	services.Database = database.NewDatabase(root)
 	services.Search = musicSearch.Create()
 
-	startWebServer(services)
+	startWebServer()
 	startStaticFileServer()
 
 	http.ListenAndServe("localhost:4001", nil)
 }
 
-func startWebServer(services services.Services) {
-	api := api.NewAPI(services)
+func startWebServer() {
+	api := api.NewAPI()
 
 	http.Handle("/api", api)
 }

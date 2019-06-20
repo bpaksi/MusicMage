@@ -1,6 +1,5 @@
-function webSockResultToAction(handler) {
+function webSockResultToAction() {
   return ({ dispatch }) => next => action => {
-    var handled = false;
     if (action.type === "webSocketMessage") {
       const { type, payload } = action.parameters.message;
       const funcName = camelize(type.replace("_", " ").toLowerCase());
@@ -8,14 +7,18 @@ function webSockResultToAction(handler) {
       for (var i = 0; i < arguments.length; i++) {
         if (arguments[i][funcName]) {
           dispatch(arguments[i][funcName](payload));
-          handled = true;
+
+          return;
         }
       }
+
+      console.warn("No action found for inbound message", {
+        "expected action": funcName,
+        message: action.parameters.message
+      });
     }
 
-    if (!handled) {
-      return next(action);
-    }
+    return next(action);
   };
 }
 

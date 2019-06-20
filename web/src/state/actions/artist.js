@@ -1,20 +1,20 @@
 export const artistSubscribe = artist => ({
-  type: "artistSubscribe",
+  type: "artistsFetch",
   parameters: { artist },
   reduce: () => ({ artists: [] }),
   webSocketSend: {
     type: "ARTIST_SUBSCRIBE",
     payload: artist ? artist : ""
   },
-  webSocketResults: ({ dispatch, results }) => {
-    dispatch(artistSubscribed(results));
-  }
+ 
 });
 
-const artistSubscribed = results => ({
-  type: "artistSubscribed",
-  parameters: { results }
+export const artistsFetched = artists => ({
+  type: "artistsFetched",
+  parameters: { artists },
+  reduce: () => ({ artists: [...artists] })
 });
+
 
 export const artistUnsubscribe = () => ({
   type: "artistUnsubscribe",
@@ -23,6 +23,9 @@ export const artistUnsubscribe = () => ({
     type: "ARTIST_UNSUBSCRIBE"
   }
 });
+
+
+
 
 export const artistAdded = artist => ({
   type: "artistAdded",

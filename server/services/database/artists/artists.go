@@ -3,114 +3,85 @@ package artists
 import (
 	"sync"
 
-	"github.com/bpaksi/MusicMage/server/services/database/files"
+	"github.com/bpaksi/MusicMage/server/services/database/songs"
+	"github.com/bpaksi/MusicMage/server/tools/messagebus"
+
 	"github.com/bpaksi/MusicMage/server/tools"
 )
 
-// ChangeHandler ...
-type ChangeHandler func(old, current Artist)
-
-type registeredChangeHander struct {
-	Key           int64
-	ChangeHandler ChangeHandler
+// ArtistChanged ...
+type ArtistChanged struct {
+	Old Artist
+	New Artist
 }
 
 // Artists ...
 type Artists struct {
-	sync.RWMutex
-	Records []*Artist
+	lock    sync.RWMutex
+	records []Artist
 
 	identiy *tools.IdentityGenerator
-
-	changeHandlerKeyGenerator *tools.IdentityGenerator
-	changeHandlers            []registeredChangeHander
 }
 
-// NewArtistIndex ...
-func NewArtistIndex(files *files.Files) *Artists {
-	artists := &Artists{}
-	artists.Records = make([]*Artist, 0)
-	artists.identiy = tools.NewIdentityGenerator()
-	artists.changeHandlerKeyGenerator = tools.NewIdentityGenerator()
-	artists.changeHandlers = make([]registeredChangeHander, 0)
-
-	files.OnAdd(artists.onAddSongHandler)
-	files.OnDelete(artists.onDeleteSongHandler)
-	files.OnChange(artists.onChangeSongHandler)
-	return artists
-}
-
-// AddChangeHandler ...
-func (artists *Artists) AddChangeHandler(handler ChangeHandler) (key int64) {
-	key = artists.changeHandlerKeyGenerator.Next()
-
-	h := registeredChangeHander{
-		Key:           key,
-		ChangeHandler: handler,
+func init() {
+	artists := &Artists{
+		records: make([]Artist, 0),
+		identiy: tools.NewIdentityGenerator(),
 	}
 
-	artists.changeHandlers = append(artists.changeHandlers, h)
-	return
+	messagebus.Subscribe("SONG_ADDED", artists.onAddSong)
+	messagebus.Subscribe("SONG_DELETED", artists.onDeleteSong)
+	messagebus.Subscribe("SONG_CHANGED", artists.onChangeSong)
 }
 
-// RemoveChangeHandler ...
-func (artists *Artists) RemoveChangeHandler(key int64) bool {
-	for i, hndlr := range artists.changeHandlers {
-		if hndlr.Key == key {
-			artists.changeHandlers = append(artists.changeHandlers[:i], artists.changeHandlers[i+1:]...)
-			return true
-		}
-	}
 
-	return false
-}
+func (artists *Artists) onAddSong(song songs.Song) {
+	artists.lock.Lock()
+	defer artists.lock.Unlock()
 
-func (artists *Artists) onAddSongHandler(file *files.MusicFile) {
-	artists.Lock()
-	defer artists.Unlock()
-
-	artist := file.Artist()
-	album := file.Album()
+	artist := song.Artist
+	album := song.Album
 
 	var artistIdx int
 	var found bool
 
 	artistIdx, found = artists.find(artist, album)
 	if !found {
-		added := &Artist{
+		added := Artist{
 			ID:        artists.identiy.Next(),
 			Name:      artist,
 			AlbumName: album,
 			SongCount: 0,
 		}
 
-		artists.Records = append(artists.Records, added)
-		artistIdx = len(artists.Records) - 1
+		artists.records = append(artists.records, added)
+		artistIdx = len(artists.records) - 1
 	}
 
-	old := artists.Records[artistIdx]
-	artists.Records[artistIdx] = &Artist{
+	old := artists.records[artistIdx]
+	artists.records[artistIdx] = Artist{
 		ID:        old.ID,
 		Name:      artist,
 		AlbumName: album,
 		SongCount: old.SongCount + 1,
 	}
 
-	for _, onChange := range artists.changeHandlers {
-		onChange.ChangeHandler(*old, *artists.Records[artistIdx])
-	}
+	messagebus.Publish("ARITIST_INDEX_CHANGED", ArtistChanged{
+		Old: old,
+		New: artists.records[artistIdx],
+	})
 }
 
-func (artists *Artists) onDeleteSongHandler(file *files.MusicFile) {
-	artists.Lock()
-	defer artists.Unlock()
+func (artists *Artists) onDeleteSong(song songs.Song) {
+	artists.lock.Lock()
+	defer artists.lock.Unlock()
 
-	artist := file.Artist()
-	album := file.Album()
+	artist := song.Artist
+	album := song.Album
 
 	if artistIdx, ok := artists.find(artist, album); ok {
-		old := artists.Records[artistIdx]
-		newArtist := &Artist{
+		old := artists.records[artistIdx]
+		newArtist := Artist{
 			ID:        old.ID,
 			Name:      artist,
 			AlbumName: album,
@@ -118,31 +89,30 @@ func (artists *Artists) onDeleteSongHandler(file *files.MusicFile) {
 		}
 
 		if newArtist.SongCount == 0 {
-			artists.Records = append(artists.Records[:artistIdx], artists.Records[artistIdx+1:]...)
-
-			newArtist = &Artist{}
+			artists.records = append(artists.records[:artistIdx], artists.records[artistIdx+1:]...)
 		} else {
-			artists.Records[artistIdx] = newArtist
+			artists.records[artistIdx] = newArtist
 		}
 
-		for _, onChange := range artists.changeHandlers {
-			onChange.ChangeHandler(*old, *newArtist)
-		}
+		messagebus.Publish("ARITIST_INDEX_CHANGED", ArtistChanged{
+			Old: old,
+			New: newArtist,
+		})
 	}
 }
 
-func (artists *Artists) onChangeSongHandler(old, new *files.MusicFile) {
-	if old.Artist() != new.Artist() || old.Album() != new.Album() {
-		artists.onAddSongHandler(new)
-		artists.onDeleteSongHandler(old)
+func (artists *Artists) onChangeSong(changed songs.SongChanged) {
+	if changed.Old.Artist != changed.New.Artist || changed.Old.Album != changed.New.Album {
+		artists.onAddSong(changed.New)
+		artists.onDeleteSong(changed.Old)
 	}
 }
 
 func (artists *Artists) find(artist, album string) (idx int, ok bool) {
 	ok = false
-	for idx = range artists.Records {
-		if artists.Records[idx].Name == artist &&
-			artists.Records[idx].AlbumName == album {
+	for idx = range artists.records {
+		if artists.records[idx].Name == artist &&
+			artists.records[idx].AlbumName == album {
 			ok = true
 			break
 		}

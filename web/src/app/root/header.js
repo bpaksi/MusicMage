@@ -79,7 +79,7 @@ class Header extends React.Component {
             <MenuItem onClick={this.onMenuLibrary}>Library</MenuItem>
             <MenuItem onClick={this.onSettings}>Settings</MenuItem>
           </Menu>
-          <Typography variant="title" color="inherit">
+          <Typography variant="h1" color="inherit">
             Music Mage
           </Typography>
         </Toolbar>

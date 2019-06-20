@@ -1,9 +1,5 @@
 package unassigned
 
-import (
-	"github.com/bpaksi/MusicMage/server/api/connection"
-)
-
 const subscriptionName = "Unassigned"
 
 // UnassignedRecord ...
@@ -18,7 +14,7 @@ type UnassignedRecord struct {
 	Title           string `json:"title"`
 }
 
-func init() {
-	connection.Router.Handle("UNASSIGNED_SUBSCRIBE", OnSubscribe)
-	connection.Router.Handle("UNASSIGNED_UNSUBSCRIBE", OnUnsubscribe)
-}
+// func init() {
+// 	connection.Router.Handle("UNASSIGNED_SUBSCRIBE", OnSubscribe)
+// 	connection.Router.Handle("UNASSIGNED_UNSUBSCRIBE", OnUnsubscribe)
+// }
