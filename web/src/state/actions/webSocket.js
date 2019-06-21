@@ -64,23 +64,23 @@ const webSocketError = (message, data) => ({
   parameters: { message, data }
 });
 
-export const webSocketSend = payload => {
+export const webSocketSend = (type, payload) => {
   return {
     type: "webSocketSend",
     scope,
-    parameters: { payload },
-    afterReduce: ({ getState, dispatch, action }) => {
-      sendOnConnect(getState, dispatch, action.parameters.payload);
+    parameters: { type, payload },
+    afterReduce: ({ getState, dispatch }) => {
+      sendOnConnect(getState, dispatch, { type, payload });
     }
   };
 };
 
 const sendOnConnect = (getState, dispatch, payload, retrycount) => {
-  const webSocket = getState();
-  if (webSocket.socket.readyState === 1) {
+  const { socket } = getState();
+  if (socket.readyState === 1) {
     try {
       const message = JSON.stringify(payload);
-      webSocket.socket.send(message);
+      socket.send(message);
     } catch (err) {
       dispatch(webSocketError("Error sending message", { err, payload }));
     }

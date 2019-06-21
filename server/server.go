@@ -1,15 +1,19 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
-	"os/user"
-	"path"
+	"os"
+	"os/signal"
+	"runtime"
+	"syscall"
+	"time"
 
 	"github.com/bpaksi/MusicMage/server/tools/logger"
-	"github.com/bpaksi/MusicMage/server/tools/messagebus"
 
 	"github.com/bpaksi/MusicMage/server/api"
+	"github.com/bpaksi/MusicMage/server/services/database"
 )
 
 func main() {
@@ -20,38 +24,49 @@ func main() {
 	}()
 
 	logger.Init()
-	log.Println("Music Mage server started")
 
-	startDatabase()
-	startWebServer()
+	database.StartDatabase()
+	api.StartAPI()
 	startStaticFileServer()
 
-	http.ListenAndServe("localhost:4001", nil)
-}
+	var stop = make(chan os.Signal)
+	startGracefulShutdown(stop)
 
-func startDatabase() {
-	root := getRepositoryFolder()
-	messagebus.Publish("DATABASE_STARTUP", root)
-}
+	// http.ListenAndServe("localhost:4001", nil)
+	httpServer := startHTTPServer()
+	<-stop
 
-func startWebServer() {
-	api := api.NewAPI()
+	database.Shutdown()
+	api.Shutdown()
 
-	http.Handle("/api", api)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	httpServer.Shutdown(ctx)
+
+	log.Printf("go functions: (%d)", runtime.NumGoroutine())
+	log.Printf("Music Mage Stopped")
 }
 
 func startStaticFileServer() {
 	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("./static"))))
 }
 
-func getRepositoryFolder() string {
-	usr, err := user.Current()
-	if err != nil {
-		log.Fatal(err)
+func startGracefulShutdown(stop chan os.Signal) {
+	signal.Notify(stop, syscall.SIGTERM)
+	signal.Notify(stop, syscall.SIGINT)
+}
+
+func startHTTPServer() *http.Server {
+
+	addr := ":" + os.Getenv("PORT")
+	if addr == ":" {
+		addr = ":4001"
 	}
 
-	path := path.Join(usr.HomeDir, "music", "my music test")
-	// log.Printf("\tRepository path: %s", path)
-
-	return path
+	h := &http.Server{Addr: addr}
+	if err := h.ListenAndServe(); err != nil {
+		log.Fatal(err)
+	}
+	return h
 }

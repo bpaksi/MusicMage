@@ -1,29 +1,27 @@
+import { webSocketSend } from "./webSocket";
+
 export const unassignedSubscribe = (artist, album) => ({
   type: "unassignedSubscribe",
   parameters: { artist, album },
   reduce: () => ({ songs: [] }),
-  webSocketSend: {
-    type: "UNASSIGNED_SUBSCRIBE",
-    payload: {
-      artist,
-      album
-    }
-  },
-
+  afterReduce: dispatch => {
+    dispatch(
+      webSocketSend("UNASSIGNED_SUBSCRIBE", {
+        artist,
+        album
+      })
+    );
+  }
 });
 
 export const unassignedUnsubscribe = () => ({
   type: "unassignedUnsubscribe",
   reduce: () => ({ songs: [] }),
-  webSocketSend: {
-    type: "UNASSIGNED_UNSUBSCRIBE"
+  afterReduce: dispatch => {
+    dispatch(webSocketSend("UNASSIGNED_UNSUBSCRIBE"));
   }
 });
 
-const unassignedSubscribed = results => ({
-  type: "unassignedSubscribed",
-  parameters: { results }
-});
 
 export const unassignedAdded = song => ({
   type: "unassignedAdded",

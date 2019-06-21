@@ -1,19 +1,29 @@
 package database
 
 import (
-	"github.com/bpaksi/MusicMage/server/services/database/artists"
+	"log"
+	"os/user"
+	"path"
 
 	// allow database services to register themselves
 	_ "github.com/bpaksi/MusicMage/server/services/database/songs"
 	_ "github.com/bpaksi/MusicMage/server/services/database/watcher"
+
+	"github.com/bpaksi/MusicMage/server/tools/messagebus"
 )
 
-// Artists ...
-type Artists interface {
-	All() []artists.Artist
+// StartDatabase ...
+func StartDatabase() {
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	path := path.Join(usr.HomeDir, "music", "my music test")
+	messagebus.Publish("DATABASE_STARTUP", path)
 }
 
-// GetArtists ...
-func GetArtists() Artists {
-	return artists.Artists
+// Shutdown ...
+func Shutdown() {
+	messagebus.Publish("DATABASE_SHUTDOWN", nil)
 }

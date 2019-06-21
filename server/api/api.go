@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/bpaksi/MusicMage/server/tools/messagebus"
+
 	"github.com/gorilla/websocket"
 
 	// allow commands to register themselves
@@ -20,15 +22,22 @@ type api struct {
 	upgrader websocket.Upgrader
 }
 
-// NewAPI ...
-func NewAPI() http.Handler {
-	var api api
-	api.upgrader = websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-		CheckOrigin:     func(r *http.Request) bool { return true },
+// StartAPI ...
+func StartAPI() {
+	api := &api{
+		upgrader: websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 1024,
+			CheckOrigin:     func(r *http.Request) bool { return true },
+		},
 	}
-	return &api
+
+	http.Handle("/api", api)
+}
+
+// Shutdown ...
+func Shutdown() {
+	messagebus.Publish("API_SHUTDOWN", nil)
 }
 
 // ServeHTTP ...

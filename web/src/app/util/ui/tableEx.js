@@ -9,7 +9,7 @@ export const TableHeadEx = ({ columns }) => (
   <TableHead>
     <TableRow>
       {columns.map(column => (
-        <TableCell key={column.id} numeric={column.numeric}>
+        <TableCell key={column.id} align={column.numeric ? "right" : "left"}>
           {column.label}
         </TableCell>
       ))}
@@ -32,7 +32,7 @@ export const TableEx = ({ data, columns, onRowProps }) => {
           return (
             <TableRow key={row}>
               {columns.map(column => (
-                <TableCell key={column.id} numeric={column.numeric} style={{padding: "3px"}}>
+                <TableCell key={column.id} align={column.numeric ? "right" : "left"} style={{padding: "3px"}}>
                   {column.render(rowProps)}
                 </TableCell>
               ))}

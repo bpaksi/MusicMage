@@ -10,12 +10,12 @@ import (
 	"github.com/bpaksi/MusicMage/server/tools/messagebus"
 )
 
-// Songs ...
-type Songs struct {
+// SongList ...
+type SongList struct {
 	lock    sync.RWMutex
 	identiy *tools.IdentityGenerator
 
-	records  []*Song
+	records  []Song
 	badFiles []*badMusicRecord
 }
 
@@ -31,18 +31,23 @@ type SongChanged struct {
 	New Song
 }
 
+var songs *SongList
+
 func init() {
-	songs := &Songs{
-		records:  make([]*Song, 0),
+	songs = &SongList{
+		records:  make([]Song, 0),
 		badFiles: make([]*badMusicRecord, 0),
+		identiy:  tools.NewIdentityGenerator(),
 	}
 
 	messagebus.Subscribe("FILE_ADDED", songs.onFileAdded)
 	messagebus.Subscribe("FILE_DELETED", songs.onFileDeleted)
 	messagebus.Subscribe("FILE_CHANGED", songs.onFileChanged)
+
+	messagebus.Subscribe("SONGS_FETCH", songs.onSongsFetch)
 }
 
-func (songs *Songs) onFileChanged(fullPath string) {
+func (songs *SongList) onFileChanged(fullPath string) {
 	if !isSupported(fullPath) {
 		return
 	}
@@ -57,19 +62,19 @@ func (songs *Songs) onFileChanged(fullPath string) {
 				log.Panicln("not implemented")
 				return
 			}
-			song.ID = songs.identiy.Next()
+			song.ID = old.ID
 
-			songs.records[idx] = &song
+			songs.records[idx] = song
 			messagebus.Publish("SONG_CHANGED", SongChanged{
-				Old: *old,
-				New: *songs.records[idx],
+				Old: old,
+				New: songs.records[idx],
 			})
 			break
 		}
 	}
 }
 
-func (songs *Songs) onFileAdded(fullPath string) {
+func (songs *SongList) onFileAdded(fullPath string) {
 	if !isSupported(fullPath) {
 		return
 	}
@@ -84,13 +89,14 @@ func (songs *Songs) onFileAdded(fullPath string) {
 			Err:      err,
 		})
 	} else {
-		songs.records = append(songs.records, &song)
+		song.ID = songs.identiy.Next()
+		songs.records = append(songs.records, song)
 
 		messagebus.Publish("SONG_ADDED", song)
 	}
 }
 
-func (songs *Songs) onFileDeleted(fullPath string) {
+func (songs *SongList) onFileDeleted(fullPath string) {
 	if !isSupported(fullPath) {
 		return
 	}
@@ -102,7 +108,7 @@ func (songs *Songs) onFileDeleted(fullPath string) {
 		if old.FullPath == fullPath {
 			songs.records = append(songs.records[:idx], songs.records[idx+1:]...)
 
-			messagebus.Publish("SONG_DELTED", *old)
+			messagebus.Publish("SONG_DELTED", old)
 			break
 		}
 	}

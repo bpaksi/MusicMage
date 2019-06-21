@@ -80,6 +80,14 @@ class Artist extends React.Component {
     }
   }
 
+  onSave = () => {};
+
+  onCancel = () => {
+    this.setState(() => {
+      return { dirty: {} };
+    });
+  };
+
   onChange = (value, { id, field }) => {
     console.log("onChange", { id, field, value });
 
@@ -169,7 +177,7 @@ class Artist extends React.Component {
             <option />
             <option>Rock</option>
             <option>Classic</option>
-						<option>Metal</option>
+            <option>Metal</option>
           </SelectWithChanges>
         )
       },
@@ -203,11 +211,11 @@ class Artist extends React.Component {
             onRowProps={this.onRowProps}
           />
         </CardContent>
-        <CardActions disableActionSpacing>
-          <Button size="small" color="primary">
+        <CardActions disableSpacing>
+          <Button size="small" color="primary" onClick={this.onSave}>
             Save
           </Button>
-          <Button size="small" color="secondary">
+          <Button size="small" color="secondary" onClick={this.onCancel}>
             Cancel
           </Button>
         </CardActions>

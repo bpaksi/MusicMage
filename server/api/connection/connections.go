@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -40,17 +41,18 @@ func (obj *ConnectionsList) Add(socket *websocket.Conn) (err error) {
 	return
 }
 
-// Broadcast ...
-func (obj *ConnectionsList) Broadcast(clientIDs []int64, msgType string, payload interface{}) (err error) {
+// Send ...
+func (obj *ConnectionsList) Send(clientID int64, msgType string, payload interface{}) (err error) {
 	obj.lock.RLock()
 	defer obj.lock.RUnlock()
 
-	for _, clientID := range clientIDs {
-		if connection, ok := obj.all[clientID]; ok {
-			connection.Send(msgType, payload)
-		}
+	connection, ok := obj.all[clientID]
+	if !ok {
+		err = fmt.Errorf("Unable to send message to clientID: %d", clientID)
+		return
 	}
 
+	connection.Send(msgType, payload)
 	return
 }
 

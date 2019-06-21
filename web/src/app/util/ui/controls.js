@@ -5,7 +5,8 @@ import IconButton from "@material-ui/core/IconButton";
 import { withCustomData } from "./withCustomData";
 import { withTrackChanges } from "./trackChanges";
 
-export const TextFieldWithChanges = withTrackChanges()(TextField);
+export const TextFieldEx = withCustomData(e => e.target.value)(TextField);
+export const TextFieldWithChanges = withTrackChanges()(TextFieldEx);
 
 export const IconButtonEx = withCustomData(e => e.target.value)(IconButton);
 

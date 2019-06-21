@@ -1,17 +1,15 @@
-export const searchForAlbums = (artist) => ({
+import { webSocketSend } from "./webSocket";
+
+export const searchForAlbums = artist => ({
   type: "searchForAlbums",
   parameters: { artist },
   reduce: () => ({ songs: [] }),
-  webSocketSend: {
-    type: "SEARCH_ALBUM",
-    payload: {
-      artist,
-    }
-  },
-
+  afterReduce: dispatch => {
+    dispatch(webSocketSend("SEARCH_ALBUM", artist));
+  }
 });
 
-export const searchForAlbumsResult = (results) => ({
+export const searchForAlbumsResult = results => ({
   type: "searchForAlbumsResult",
-  parameters: { results },
+  parameters: { results }
 });

@@ -1,9 +1,8 @@
 package artist
 
 import (
-	"log"
-
 	"github.com/bpaksi/MusicMage/server/api/connection"
+	"github.com/bpaksi/MusicMage/server/services/database/albums"
 	"github.com/bpaksi/MusicMage/server/tools/messagebus"
 )
 
@@ -12,40 +11,37 @@ const subscriptionName = "Artist"
 func init() {
 	messagebus.SubscribeWithClientID("ARTIST_SUBSCRIBE", onSubscribe)
 	messagebus.SubscribeWithClientID("ARTIST_UNSUBSCRIBE", onUnsubscribe)
+	messagebus.Subscribe("ALBUMS_FETCHED", onAlbumsFetched)
 
 	connection.MessageWhitelist.Add("ARTIST_SUBSCRIBE")
 	connection.MessageWhitelist.Add("ARTIST_UNSUBSCRIBE")
 }
 
 func onSubscribe(clientID int64, artist string) {
-	log.Printf("artist.onSubscribe: %s (%d)", artist, clientID)
-
 	connection.Subscriptions.Add(clientID, subscriptionName, artist)
-
-	// all := database.GetArtists().All()
-
-	// for _, artist := range all {
-
-	// }
+	messagebus.Publish("ALBUMS_FETCH", nil)
 }
 
 func onUnsubscribe(clientID int64) {
-	log.Printf("artist.onUnsubscribe: %d", clientID)
-
 	connection.Subscriptions.Remove(clientID, subscriptionName)
-
 }
 
-// func (artists *Artists) onFetchArtist(clientID int64, filter string) {
-// 	filtered := artists.records
-// 	if len(filter) > 0 {
-// 		filtered = make([]Artist, 0)
-// 		for _, artist := range artists.records {
-// 			if artist.Name == filter {
-// 				filtered = append(filtered, artist)
-// 			}
-// 		}
-// 	}
+func onAlbumsFetched(list []albums.Album) {
+	subscriptions := connection.Subscriptions.List(subscriptionName)
 
-// 	// messagebus.Publish("ARTISTS_FETCHED", filtered)
-// }
+	for _, subscription := range subscriptions {
+		albumName := subscription.Data.(string)
+
+		filtered := list
+		if albumName != "" {
+			filtered = make([]albums.Album, 0)
+			for _, album := range list {
+				if album.AlbumName == albumName {
+					filtered = append(filtered, album)
+				}
+			}
+		}
+
+		connection.Connections.Send(subscription.ClientID, "ARTISTS_FETCHED", filtered)
+	}
+}

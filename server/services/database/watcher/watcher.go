@@ -67,6 +67,7 @@ func (watcher *Watcher) onStop() {
 func (watcher *Watcher) watch() {
 	for {
 		select {
+
 		case event := <-watcher.watcher.Events:
 			if len(event.Name) == 0 {
 				continue
@@ -83,12 +84,14 @@ func (watcher *Watcher) watch() {
 				log.Printf("error: %#v", err)
 			}
 		case <-time.After(10 * time.Second):
-			if !watcher.isWatching {
-				watcher.watcher.Close()
-				watcher.stop <- true
-				return
-			}
+			break
 		}
+		
+		if !watcher.isWatching {
+			watcher.stop <- true
+			return
+		}
+
 	}
 }
 

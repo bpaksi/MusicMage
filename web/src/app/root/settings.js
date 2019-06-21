@@ -86,7 +86,7 @@ class Settings extends React.Component {
                 onChange={this.onTextChange}
               />
             </CardContent>
-            <CardActions disableActionSpacing>
+            <CardActions disableSpacing>
               <Fab
                 aria-label="Search"
                 color="primary"

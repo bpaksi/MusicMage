@@ -8,14 +8,13 @@ import (
 
 // Song ...
 type Song struct {
-	ID       int64  `json:"id"`
-	FullPath string `json:"fullPath"`
-
-	Artist string `json:"artist"`
-	Album  string `json:"album"`
-	Title  string `json:"title"`
-	Genre  string `json:"genre"`
-	Year   string `json:"year"`
+	ID       int64 `json:"id"`
+	FullPath string
+	Artist   string `json:"artist"`
+	Album    string `json:"album"`
+	Title    string `json:"title"`
+	Genre    string `json:"genre"`
+	Year     string `json:"year"`
 }
 
 // OpenMusicFile ...
@@ -37,7 +36,7 @@ func OpenMusicFile(fullPath string) (song Song, err error) {
 	return
 }
 
-// SetAttributes ...
+// SaveChanges ...
 func (song *Song) SaveChanges() (hasChanges bool, err error) {
 	hasChanges = false
 
