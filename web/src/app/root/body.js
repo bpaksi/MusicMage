@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { withState, compose } from "../util";
+import { withStateScoped, compose } from "../util";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Header from "./header";
@@ -21,12 +21,15 @@ class Body extends Component {
   }
 
   render() {
+		const {webSocket} = this.props
+
     return (
       <>
         <CssBaseline />
         <Header />
         <Navigation />
-        <Client />
+        {webSocket.connected && (<Client />)}
+        {!webSocket.connected && (<h2>Connecting ...</h2>)}
         <Confirm />
         <Notify />
       </>
@@ -34,6 +37,6 @@ class Body extends Component {
   }
 }
 export default compose(
-  withState(),
+  withStateScoped("webSocket"),
   withStyles(styles)
 )(Body);

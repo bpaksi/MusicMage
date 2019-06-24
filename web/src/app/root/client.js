@@ -15,18 +15,12 @@ const styles = theme => ({
 
 class Client extends React.Component {
   render() {
-    const { navigation, classes } = this.props;
-    if (navigation.stack.length === 0) {
-      return null;
-    }
-
-    const step = navigation.stack[navigation.stack.length - 1];
-    const route = routes[step.key];
-
-		if (!route.render) return null;
-		
-		const params = {...step.param, key: step.key + navigation.pageKey }
-    return <Paper className={classes.paper}>{route.render(params)}</Paper>;
+    const { classes } = this.props;
+    return (
+      <Paper className={classes.paper}>
+        {Object.keys(routes).filter(k => routes[k].router).map(k => routes[k].router())}
+      </Paper>
+    );
 
     // return (
     //   <Slide key={activeStep.key} direction={navigation.direction === "forward" ? "left" : "right"} in={true}>

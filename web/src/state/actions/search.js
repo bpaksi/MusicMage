@@ -4,7 +4,7 @@ export const searchForAlbums = artist => ({
   type: "searchForAlbums",
   parameters: { artist },
   reduce: () => ({ songs: [] }),
-  afterReduce: dispatch => {
+  afterReduce: ({dispatch}) => {
     dispatch(webSocketSend("SEARCH_ALBUM", artist));
   }
 });

@@ -28,12 +28,12 @@ class Folders extends React.Component {
   componentDidMount() {
     const { actions } = this.props;
 
-    actions.artistSubscribe();
+    // actions.artistSubscribe();
   }
   componentWillUnmount() {
     const { actions } = this.props;
 
-    actions.artistUnsubscribe();
+    // actions.artistUnsubscribe();
   }
 
   onClick = artist => {

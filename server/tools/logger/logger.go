@@ -24,7 +24,7 @@ func Init() {
 
 	log.SetOutput(&logFileWriter)
 
-	log.Printf("logger.Init: %s\n", fileName)
+	// log.Printf("logger.Init: %s\n", fileName)
 }
 
 func getFileName() string {

@@ -59,7 +59,7 @@ func (client *Connection) readData(disconnected chan<- bool) {
 		var payload clientPayload
 		err := client.socket.ReadJSON(&payload)
 		if err != nil {
-			// log.Println("Connection.readData error: " + err.Error())
+			log.Println("Connection.readData error: " + err.Error())
 
 			disconnected <- true
 			return

@@ -1,8 +1,6 @@
 package songs
 
 import (
-	"log"
-
 	"github.com/bpaksi/MusicMage/server/tools/messagebus"
 )
 
@@ -23,7 +21,7 @@ func (songs *SongList) onSongsFetch(param FetchParam) {
 	songs.lock.RLock()
 	defer songs.lock.RUnlock()
 
-	log.Printf("songs.onSongsFetch: %s/%s", param.Artist, param.Album)
+	// log.Printf("songs.onSongsFetch: %s/%s", param.Artist, param.Album)
 
 	result := FetchResult{
 		Artist: param.Artist,

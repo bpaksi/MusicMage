@@ -7,6 +7,7 @@ import Step from "@material-ui/core/Step";
 import StepButton from "@material-ui/core/StepButton";
 import Stepper from "@material-ui/core/Stepper";
 import { routes } from "../routes";
+import { Link } from "react-router-dom";
 
 const styles = {
   connector: {
@@ -22,12 +23,14 @@ const BreadcrumpConnector = ({ classes }) => (
 const NavStep = ({ route, active, onClick }) => (
   <Step>
     <StepButton
+      component={Link}
       icon={
         route.icon && (
           <Icon color={active ? "primary" : "action"}>{route.icon}</Icon>
         )
       }
-      onClick={onClick}
+      to={route.path}
+      // onClick={onClick}
     >
       {route.label}
     </StepButton>

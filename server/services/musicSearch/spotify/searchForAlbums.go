@@ -1,7 +1,6 @@
 package spotify
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/bpaksi/MusicMage/server/services/musicSearch/data"
@@ -28,7 +27,7 @@ func (api *API) SearchForAlbums(artist string) (results []data.AlbumRecord, err 
 		// log.Printf("Spotify - artist search: %s, Album Cnt: %d", artist, len(r.Albums.Albums))
 
 		for _, item := range r.Albums.Albums {
-			fmt.Println("   ", item.Name)
+			log.Println("   " + item.Name)
 
 			artist := ""
 			artistInternalID := ""

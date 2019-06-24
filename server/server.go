@@ -1,14 +1,11 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"runtime"
 	"syscall"
-	"time"
 
 	"github.com/bpaksi/MusicMage/server/tools/logger"
 
@@ -29,23 +26,24 @@ func main() {
 	api.StartAPI()
 	startStaticFileServer()
 
-	var stop = make(chan os.Signal)
-	startGracefulShutdown(stop)
+	http.ListenAndServe("localhost:4000", nil)
 
-	// http.ListenAndServe("localhost:4001", nil)
-	httpServer := startHTTPServer()
-	<-stop
+	// var stop = make(chan os.Signal)
+	// startGracefulShutdown(stop)
 
-	database.Shutdown()
-	api.Shutdown()
+	// httpServer := startHTTPServer()
+	// <-stop
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	// database.Shutdown()
+	// api.Shutdown()
 
-	httpServer.Shutdown(ctx)
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// defer cancel()
 
-	log.Printf("go functions: (%d)", runtime.NumGoroutine())
-	log.Printf("Music Mage Stopped")
+	// httpServer.Shutdown(ctx)
+
+	// log.Printf("go functions: (%d)", runtime.NumGoroutine())
+	// log.Printf("Music Mage Stopped")
 }
 
 func startStaticFileServer() {

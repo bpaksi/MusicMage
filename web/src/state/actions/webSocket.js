@@ -30,7 +30,9 @@ const webSocketConnecting = socket => ({
 });
 
 const webSocketConnected = () => ({
-  type: "webSocketConnected"
+	type: "webSocketConnected",
+	scope,
+	reduce: () => ({ connected: true })
 });
 
 export const webSocketDisconnect = () => ({
@@ -50,7 +52,7 @@ export const webSocketDisconnect = () => ({
 const webSocketDisconnected = () => ({
   type: "webSocketDisconnected",
   scope,
-  reduce: () => ({ socket: null })
+  reduce: () => ({ socket: null, connected: false })
 });
 
 const webSocketMessage = message => ({
@@ -64,22 +66,25 @@ const webSocketError = (message, data) => ({
   parameters: { message, data }
 });
 
-export const webSocketSend = (type, payload) => {
+export const webSocketSend = (msgType, payload) => {
   return {
     type: "webSocketSend",
     scope,
-    parameters: { type, payload },
+    parameters: { msgType, payload },
     afterReduce: ({ getState, dispatch }) => {
-      sendOnConnect(getState, dispatch, { type, payload });
+      sendOnConnect(getState, dispatch, { type: msgType, payload });
     }
   };
 };
 
 const sendOnConnect = (getState, dispatch, payload, retrycount) => {
   const { socket } = getState();
-  if (socket.readyState === 1) {
+  if (socket && socket.readyState === 1) {
     try {
-      const message = JSON.stringify(payload);
+			const message = JSON.stringify(payload);
+			
+console.log("sendOnConnect", {payload, message})
+
       socket.send(message);
     } catch (err) {
       dispatch(webSocketError("Error sending message", { err, payload }));

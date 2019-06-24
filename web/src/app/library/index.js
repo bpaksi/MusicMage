@@ -15,6 +15,8 @@ import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
+import { Link } from "react-router-dom";
+
 import { routes } from "../routes";
 
 const Library = ({ actions }) => (
@@ -35,7 +37,11 @@ const Library = ({ actions }) => (
                 )}
                 <ListItemText primary={routes[route].label} />
                 <ListItemSecondaryAction>
-                  <IconButton onClick={() => actions.navigateTo(route)}>
+                  <IconButton
+                    component={Link}
+                    to={routes[route].path}
+                    // onClick={() => actions.navigateTo(route)}
+                  >
                     <ChevronRightIcon />
                   </IconButton>
                 </ListItemSecondaryAction>

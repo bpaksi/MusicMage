@@ -8,4 +8,5 @@ path=$GOPATH/src/github.com/bpaksi/musicmage
 
 # start server
 cd $path/server
-gin -p=4000 -a=4001 run server.go
+# gin -p=4000 -a=4001 run server.go
+fresh

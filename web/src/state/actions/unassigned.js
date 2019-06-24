@@ -4,7 +4,7 @@ export const unassignedSubscribe = (artist, album) => ({
   type: "unassignedSubscribe",
   parameters: { artist, album },
   reduce: () => ({ songs: [] }),
-  afterReduce: dispatch => {
+  afterReduce: ({dispatch}) => {
     dispatch(
       webSocketSend("UNASSIGNED_SUBSCRIBE", {
         artist,
@@ -17,7 +17,7 @@ export const unassignedSubscribe = (artist, album) => ({
 export const unassignedUnsubscribe = () => ({
   type: "unassignedUnsubscribe",
   reduce: () => ({ songs: [] }),
-  afterReduce: dispatch => {
+  afterReduce: ({dispatch}) => {
     dispatch(webSocketSend("UNASSIGNED_UNSUBSCRIBE"));
   }
 });
