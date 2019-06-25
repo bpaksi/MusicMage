@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { withStateScoped, compose, IconButtonEx } from "../util";
 
@@ -18,7 +19,7 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 const styles = theme => ({
   root: {
-    ...theme.mixins.gutters(),
+    ...theme.mixins.gutters()
     // paddingTop: theme.spacing.unit * 2,
     // paddingBottom: theme.spacing.unit * 2
   }
@@ -35,16 +36,6 @@ class Artists extends React.Component {
 
     actions.artistUnsubscribe();
   }
-
-  onClick = artist => {
-		// console.log('onClick: ', artist);
-    const { actions } = this.props;
-
-    actions.navigateTo("album", {
-      artist: artist.name,
-      album: artist.albumName
-    });
-  };
 
   render() {
     const { artists, classes } = this.props;
@@ -66,7 +57,11 @@ class Artists extends React.Component {
                   secondary={artist.albumName}
                 />
                 <ListItemSecondaryAction>
-                  <IconButtonEx data={artist} onClick={this.onClick}>
+                  <IconButtonEx
+                    data={artist}
+                    component={Link}
+                    to={"/album/" + artist.name + "/" + artist.albumName}
+                  >
                     <ChevronRightIcon />
                   </IconButtonEx>
                 </ListItemSecondaryAction>

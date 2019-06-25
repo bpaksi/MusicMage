@@ -12,6 +12,7 @@ import (
 	_ "github.com/bpaksi/MusicMage/server/api/command/album"
 	_ "github.com/bpaksi/MusicMage/server/api/command/artist"
 	_ "github.com/bpaksi/MusicMage/server/api/command/folder"
+	_ "github.com/bpaksi/MusicMage/server/api/command/genres"
 	_ "github.com/bpaksi/MusicMage/server/api/command/search"
 	_ "github.com/bpaksi/MusicMage/server/api/command/song"
 	_ "github.com/bpaksi/MusicMage/server/api/command/unassigned"

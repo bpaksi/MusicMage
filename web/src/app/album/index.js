@@ -1,8 +1,8 @@
 import React from "react";
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import {
-  withStateScoped,
+  withState,
   compose,
   TableEx,
   SelectWithChanges,
@@ -16,6 +16,7 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
+import Divider from '@material-ui/core/Divider';
 
 // import Table from "@material-ui/core/Table";
 // import TableBody from "@material-ui/core/TableBody";
@@ -25,24 +26,30 @@ import CardContent from "@material-ui/core/CardContent";
 
 // import Song from "./song";
 
+import AddGenre from "./addGenre"
+import { MenuItem } from "@material-ui/core";
+
 const styles = theme => ({
   card: {},
-  table: {}
+	table: {},
 });
 
 class Artist extends React.Component {
-  state = { dirty: {} };
+  state = { addGenre: undefined, dirty: {} };
 
   componentDidMount() {
-    const { artistName, albumName, actions } = this.props;
+    const { match, actions } = this.props;
+    const { artist, album } = match.params;
+    actions.albumSubscribe(artist, album);
 
-    actions.albumSubscribe(artistName, albumName);
+    actions.genresSubscribe();
   }
 
   componentWillUnmount() {
     const { actions } = this.props;
 
     actions.albumUnsubscribe();
+    actions.genresUnsubscribe();
   }
 
   componentDidUpdate() {
@@ -80,7 +87,10 @@ class Artist extends React.Component {
     }
   }
 
-  onSave = () => {};
+  onSave = () => {
+    const { dirty } = this.state;
+    console.log("Artist.onSave", dirty);
+  };
 
   onCancel = () => {
     this.setState(() => {
@@ -100,6 +110,18 @@ class Artist extends React.Component {
     });
   };
 
+	onGenreChange = (value, data) => {
+		console.log("onGenreChange", value) 
+
+		if (value === "*add") {
+			this.setState({addGenre: data})
+			return
+		}
+
+
+		this.onChange(value, data)
+	}
+
   onUndo = ({ id, field }) => {
     this.setState(state => {
       const dirty = { ...state.dirty };
@@ -117,15 +139,28 @@ class Artist extends React.Component {
       song: { ...song, ...dirtySong },
       dirty: field => field in dirtySong
     };
-  };
+	};
+	
+
+	onAddGenreSuccess = (newGenre) => {
+		const {addGenre} = this.state
+		this.onChange(newGenre, addGenre)
+
+		this.setState({addGenre: undefined})
+	}
+
+	onAddGenreClose = () => {
+		this.setState({addGenre: undefined})
+	}
 
   render() {
-    const { artistName, albumName, songs, classes } = this.props;
-    const { dirty } = this.state;
+    const { match, songs, genres, classes } = this.props;
+    const { addGenre, dirty } = this.state;
+    const { artist, album } = match.params;
 
     console.log("Album - render", {
-      artistName,
-      albumName,
+      artist,
+      album,
       props: this.props,
       dirty
     });
@@ -167,18 +202,29 @@ class Artist extends React.Component {
         label: "Genre",
         render: ({ song, dirty }) => (
           <SelectWithChanges
-            native
+
+            fullWidth
             value={song.genre}
             data={{ id: song.id, field: "genre" }}
-            onChange={this.onChange}
+            onChange={this.onGenreChange}
             onUndo={this.onUndo}
             dirty={dirty("genre")}
           >
-            <option />
-            <option>Rock</option>
-            <option>Classic</option>
-            <option>Metal</option>
+            {genres.map(genre => (
+              <MenuItem key={genre} value={genre}>{genre}</MenuItem>
+						))}
+						<Divider />
+            <MenuItem value="*add">Add new ...</MenuItem>
           </SelectWithChanges>
+          // 	<Select
+          // 	native
+          //   inputProps={{
+          //     name: 'age',
+          //     id: 'age-simple',
+          //   }}
+          // >
+
+          // </Select>
         )
       },
       {
@@ -203,7 +249,7 @@ class Artist extends React.Component {
 
     return (
       <Card className={classes.card}>
-        <CardHeader title={artistName} subheader={albumName} />
+        <CardHeader title={artist} subheader={album} />
         <CardContent>
           <TableEx
             data={songs}
@@ -212,24 +258,25 @@ class Artist extends React.Component {
           />
         </CardContent>
         <CardActions disableSpacing>
-          <Button size="small" color="primary" onClick={this.onSave}>
+          <Button
+            size="small"
+            color="primary"
+            disabled={Object.keys(dirty).length === 0}
+            onClick={this.onSave}
+          >
             Save
           </Button>
           <Button size="small" color="secondary" onClick={this.onCancel}>
             Cancel
           </Button>
         </CardActions>
+				<AddGenre open={addGenre !== undefined} onSuccess={this.onAddGenreSuccess} onClose={this.onAddGenreClose}/>
       </Card>
     );
   }
 }
 
-Artist.propTypes = {
-  artistName: PropTypes.string.isRequired,
-  albumName: PropTypes.string.isRequired
-};
-
 export default compose(
-  withStateScoped("songs"),
+  withState(),
   withStyles(styles)
 )(Artist);

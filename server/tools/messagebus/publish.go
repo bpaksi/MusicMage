@@ -7,6 +7,12 @@ import (
 
 // PublishVerbose ...
 func PublishVerbose(msg Message) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("PANIC occurred attemting to publish %+v (%+v)", msg, r)
+		}
+	}()
+
 	bus.lock.RLock()
 	defer bus.lock.RUnlock()
 

@@ -1,6 +1,5 @@
 import { webSocketConnect } from "../actions";
 import { notifySuccess, notifyError } from "../actions/notify";
-import { navigateRefresh } from "../actions/navigation";
 
 export default () => {
   var url = "";
@@ -19,7 +18,7 @@ export default () => {
       case "webSocketConnected":
         if (attemptingReconnect) {
           dispatch(notifySuccess("Server connected"));
-          dispatch(navigateRefresh());
+          window.location.reload()
 
           attemptingReconnect = false;
         }

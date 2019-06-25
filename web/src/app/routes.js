@@ -27,7 +27,7 @@ export const routes = {
     label: "Album",
     icon: "album",
     // render: ({ key, artist, album }) => <Album key={key} artistName={artist} albumName={album} />
-		router: () => <Route key="Album" path="/album" component={Album} />
+		router: () => <Route key="Album" path="/album/:artist/:album" component={Album} />
   },
   // albums: {
   //   label: "Albums",

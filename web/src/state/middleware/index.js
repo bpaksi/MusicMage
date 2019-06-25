@@ -6,14 +6,12 @@ import webSocketReconnect from "./webSocketReconnect";
 
 import webSocketResultToAction from "./webSocketResultToAction";
 
-import * as album from '../actions/album'
-import * as artist from '../actions/artist'
-import * as unassigned from '../actions/unassigned'
+import * as actions from '../actions'
 
 export default applyMiddleware(
   webSocketErrors(),
 	webSocketReconnect(),
-	webSocketResultToAction(album, artist, unassigned),
+	webSocketResultToAction(actions),
   action(),
   logger()
 );

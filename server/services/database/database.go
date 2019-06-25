@@ -6,6 +6,7 @@ import (
 	"path"
 
 	// allow database services to register themselves
+	_ "github.com/bpaksi/MusicMage/server/services/database/genres"
 	_ "github.com/bpaksi/MusicMage/server/services/database/songs"
 	_ "github.com/bpaksi/MusicMage/server/services/database/watcher"
 

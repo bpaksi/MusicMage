@@ -31,16 +31,16 @@ class Header extends React.Component {
   };
 
   onMenuLibrary = () => {
-    const { actions } = this.props;
+    // const { actions } = this.props;
 
-    actions.navigateBack();
+    // actions.navigateBack();
     this.setState({ anchorEl: null });
   };
 
   onSettingsOpen = () => {
-    const { actions } = this.props;
+    // const { actions } = this.props;
 
-    actions.navigateBack();
+    // actions.navigateBack();
     this.setState({ anchorEl: null });
 	};
 	

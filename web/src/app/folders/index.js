@@ -36,15 +36,6 @@ class Folders extends React.Component {
     // actions.artistUnsubscribe();
   }
 
-  onClick = artist => {
-    const { actions } = this.props;
-
-    actions.navigateTo("album", {
-      artist: artist.name,
-      album: artist.albumName
-    });
-  };
-
   render() {
     const { artists, classes } = this.props;
 
