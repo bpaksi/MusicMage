@@ -1,4 +1,4 @@
-package command
+package album
 
 import (
 	"github.com/bpaksi/MusicMage/server/api/connection"

@@ -59,7 +59,7 @@ class Unassigned extends React.Component {
     console.log("Unassigned - render", unassigned);
 
     const columns = [
-      { id: "fullpath", label: "Path", render: ({ fullpath }) => fullpath },
+      { id: "path", label: "Path", render: ({ relPath, fileName }) => relPath + "/" + fileName },
       {
         id: "suggestedArtist",
         label: "Suggested Artist",
@@ -95,7 +95,7 @@ class Unassigned extends React.Component {
               // subheader="September 14, 2016"
             />
             <CardContent>
-              <TableEx data={unassigned} columns={columns} />
+              <TableEx data={unassigned.all} columns={columns} />
             </CardContent>
           </Card>
         </Paper>

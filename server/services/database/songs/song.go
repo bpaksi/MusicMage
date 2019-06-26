@@ -10,6 +10,8 @@ import (
 type Song struct {
 	ID       int64 `json:"id,string"`
 	fullPath string
+	RelPath  string `json:"relPath"`
+	FileName string `json:"fileName"`
 	Artist   string `json:"artist"`
 	Album    string `json:"album"`
 	Title    string `json:"title"`
@@ -22,7 +24,7 @@ func OpenMusicFile(fullPath string) (song Song, err error) {
 	song = Song{
 		fullPath: fullPath,
 	}
-
+	
 	var id3File *id3.File
 	id3File, err = id3.Open(fullPath)
 	if err == nil {

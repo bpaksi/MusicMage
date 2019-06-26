@@ -50,7 +50,7 @@ class Artists extends React.Component {
 
     return (
       <>
-        <Navigation steps={[routes.library.nav(), routes.artists.nav]}/>
+        <Navigation steps={[routes.library.nav(), routes.artists.nav()]}/>
         <Paper>
           <Card className={classes.card}>
             <CardHeader title="Artists" />

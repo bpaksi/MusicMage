@@ -187,7 +187,7 @@ class Artist extends React.Component {
     return (
       <>
         <Navigation
-          steps={[routes.library.nav(), routes.artists.nav, routes.album.nav(artist, album)]}
+          steps={[routes.library.nav(), routes.artists.nav(), routes.album.nav(artist, album)]}
         />
         <Paper>
           <Card className={classes.card}>

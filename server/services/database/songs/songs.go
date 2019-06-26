@@ -15,8 +15,9 @@ type SongList struct {
 	lock    sync.RWMutex
 	identiy *tools.IdentityGenerator
 
-	records  []Song
-	badFiles []*badMusicRecord
+	rootFolder string
+	records    []Song
+	badFiles   []*badMusicRecord
 }
 
 type badMusicRecord struct {
@@ -40,12 +41,21 @@ func init() {
 		identiy:  tools.NewIdentityGenerator(),
 	}
 
+	messagebus.Subscribe("DATABASE_STARTUP", songs.onStart)
+
 	messagebus.Subscribe("FILE_ADDED", songs.onFileAdded)
 	messagebus.Subscribe("FILE_DELETED", songs.onFileDeleted)
 	messagebus.Subscribe("FILE_CHANGED", songs.onFileChanged)
 
 	messagebus.Subscribe("SONGS_FETCH", songs.onSongsFetch)
 	messagebus.Subscribe("SONG_UPDATE", songs.onSongUpdate)
+}
+
+func (songs *SongList) onStart(rootFolder string) {
+	songs.lock.Lock()
+	defer songs.lock.Unlock()
+
+	songs.rootFolder = rootFolder
 }
 
 func (songs *SongList) onFileChanged(fullPath string) {
@@ -91,6 +101,10 @@ func (songs *SongList) onFileAdded(fullPath string) {
 		})
 	} else {
 		song.ID = songs.identiy.Next()
+		dir, fileName := filepath.Split(song.fullPath)
+
+		song.RelPath, _ = filepath.Rel(songs.rootFolder, dir)
+		song.FileName = fileName
 		songs.records = append(songs.records, song)
 
 		messagebus.Publish("SONG_ADDED", song)
