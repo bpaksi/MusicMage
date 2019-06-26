@@ -1,4 +1,4 @@
-package genres
+package command
 
 import (
 	"github.com/bpaksi/MusicMage/server/api/connection"

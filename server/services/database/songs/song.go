@@ -8,8 +8,8 @@ import (
 
 // Song ...
 type Song struct {
-	ID       int64 `json:"id"`
-	FullPath string
+	ID       int64 `json:"id,string"`
+	fullPath string
 	Artist   string `json:"artist"`
 	Album    string `json:"album"`
 	Title    string `json:"title"`
@@ -20,7 +20,7 @@ type Song struct {
 // OpenMusicFile ...
 func OpenMusicFile(fullPath string) (song Song, err error) {
 	song = Song{
-		FullPath: fullPath,
+		fullPath: fullPath,
 	}
 
 	var id3File *id3.File
@@ -37,39 +37,44 @@ func OpenMusicFile(fullPath string) (song Song, err error) {
 }
 
 // SaveChanges ...
-func (song *Song) SaveChanges() (hasChanges bool, err error) {
+func (song *Song) SaveChanges(update Song) (hasChanges bool, err error) {
 	hasChanges = false
 
 	var id3File *id3.File
-	id3File, err = id3.Open(song.FullPath)
+	id3File, err = id3.Open(song.fullPath)
 	if err != nil {
 		return
 	}
 
 	defer id3File.Close()
 
-	if id3File.Artist() != song.Artist {
-		id3File.SetArtist(song.Artist)
+	if id3File.Artist() != update.Artist {
+		id3File.SetArtist(update.Artist)
+		song.Artist = update.Artist
 		hasChanges = true
 	}
 
-	if id3File.Album() != song.Album {
-		id3File.SetAlbum(song.Album)
+	if id3File.Album() != update.Album {
+		id3File.SetAlbum(update.Album)
+		song.Album = update.Album
 		hasChanges = true
 	}
 
-	if id3File.Title() != song.Title {
-		id3File.SetTitle(song.Title)
+	if id3File.Title() != update.Title {
+		id3File.SetTitle(update.Title)
+		song.Title = update.Title
 		hasChanges = true
 	}
 
-	if id3File.Genre() != song.Genre {
-		id3File.SetGenre(song.Genre)
+	if id3File.Genre() != update.Genre {
+		id3File.SetGenre(update.Genre)
+		song.Genre = update.Genre
 		hasChanges = true
 	}
 
-	if id3File.Year() != song.Year {
-		id3File.SetYear(song.Year)
+	if id3File.Year() != update.Year {
+		id3File.SetYear(update.Year)
+		song.Year = update.Year
 		hasChanges = true
 	}
 
@@ -82,11 +87,11 @@ func (song *Song) PreferredRelativePath() string {
 		song.Artist,
 		song.Album,
 		song.Title,
-		filepath.Ext(song.FullPath))
+		filepath.Ext(song.fullPath))
 }
 
 // HasChanges ...
-func (song *Song) HasChanges(file *Song) (hasChanges bool) {
+func (song *Song) HasChanges(file Song) (hasChanges bool) {
 	return song.Artist != file.Artist ||
 		song.Album != file.Album ||
 		song.Title != file.Title ||

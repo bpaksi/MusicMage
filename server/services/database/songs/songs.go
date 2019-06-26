@@ -45,6 +45,7 @@ func init() {
 	messagebus.Subscribe("FILE_CHANGED", songs.onFileChanged)
 
 	messagebus.Subscribe("SONGS_FETCH", songs.onSongsFetch)
+	messagebus.Subscribe("SONG_UPDATE", songs.onSongUpdate)
 }
 
 func (songs *SongList) onFileChanged(fullPath string) {
@@ -56,7 +57,7 @@ func (songs *SongList) onFileChanged(fullPath string) {
 	defer songs.lock.Unlock()
 
 	for idx, old := range songs.records {
-		if old.FullPath == fullPath {
+		if old.fullPath == fullPath {
 			song, ferr := OpenMusicFile(fullPath)
 			if ferr != nil {
 				log.Panicln("not implemented")
@@ -105,7 +106,7 @@ func (songs *SongList) onFileDeleted(fullPath string) {
 	defer songs.lock.Unlock()
 
 	for idx, old := range songs.records {
-		if old.FullPath == fullPath {
+		if old.fullPath == fullPath {
 			songs.records = append(songs.records[:idx], songs.records[idx+1:]...)
 
 			messagebus.Publish("SONG_DELTED", old)

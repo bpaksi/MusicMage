@@ -1,9 +1,16 @@
 export const initialState = {
   artists: [],
-  songs: [],
+  songs: {
+		all: [],
+		source: [],
+		dirty: {},
+		hasChanges: false
+	},
 	unassigned:[],
 	genres: {
-		items: [] // []string
+		all: [], // []string
+		source: [],
+		added: []
 	},
   notify: {
     open: false,

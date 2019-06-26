@@ -1,4 +1,4 @@
-package album
+package command
 
 import (
 	"github.com/bpaksi/MusicMage/server/api/connection"
@@ -21,10 +21,14 @@ type SongRecord struct {
 func init() {
 	messagebus.SubscribeWithClientID("ALBUM_SUBSCRIBE", onSubscribe)
 	messagebus.SubscribeWithClientID("ALBUM_UNSUBSCRIBE", onUnsubscribe)
+	messagebus.SubscribeWithClientID("ALBUM_SAVE", onSave)
 	messagebus.Subscribe("SONGS_FETCHED", onSongsFetched)
+	messagebus.Subscribe("SONG_CHANGED", onSongChanged)
 
 	connection.MessageWhitelist.Add("ALBUM_SUBSCRIBE")
 	connection.MessageWhitelist.Add("ALBUM_UNSUBSCRIBE")
+	connection.MessageWhitelist.Add("ALBUM_SAVE")
+
 }
 
 func onSubscribe(clientID int64, param songs.FetchParam) {
@@ -36,6 +40,14 @@ func onUnsubscribe(clientID int64) {
 	connection.Subscriptions.Remove(clientID, subscriptionName)
 }
 
+func onSave(clientID int64, songs []songs.Song) {
+	// log.Printf("album.onSave: %d", len(songs))
+
+	for _, song := range songs {
+		messagebus.Publish("SONG_UPDATE", song)
+	}
+}
+
 func onSongsFetched(param songs.FetchResult) {
 	subscriptions := connection.Subscriptions.List(subscriptionName)
 
@@ -44,6 +56,18 @@ func onSongsFetched(param songs.FetchResult) {
 
 		if param.Artist == filter.Artist && param.Album == filter.Album {
 			connection.Connections.Send(subscription.ClientID, "ALBUM_FETCHED", param.Songs)
+		}
+	}
+}
+
+func onSongChanged(param songs.SongChanged) {
+	subscriptions := connection.Subscriptions.List(subscriptionName)
+
+	for _, subscription := range subscriptions {
+		filter := subscription.Data.(songs.FetchParam)
+
+		if param.New.Artist == filter.Artist && param.New.Album == filter.Album {
+			connection.Connections.Send(subscription.ClientID, "SONG_UPDATED", param.New)
 		}
 	}
 }

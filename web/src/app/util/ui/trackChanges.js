@@ -12,12 +12,13 @@ class TrackChanges extends React.Component {
   };
 
   render() {
-    const { dirty, children } = this.props;
+    const { style, dirty, children } = this.props;
     const styles = {
       container: {
         display: "flex",
         justifyContent: "center",
-        alignItems: "center"
+				alignItems: "center",
+				...style
       },
       wrapper: { width: "100%" },
       undo: {
@@ -54,10 +55,10 @@ TrackChanges.propTypes = {
 
 export function withTrackChanges() {
   return Wrapped => props => {
-    const { dirty, onUndo, ...rest } = props;
+    const { dirty, onUndo, style, ...rest } = props;
 
     return (
-      <TrackChanges dirty={dirty} onUndo={onUndo} data={props.data}>
+      <TrackChanges dirty={dirty} onUndo={onUndo} data={props.data} style={style}>
         <Wrapped {...rest} />
       </TrackChanges>
     );

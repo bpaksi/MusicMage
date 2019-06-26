@@ -86,7 +86,7 @@ func (watcher *Watcher) watch() {
 		case <-time.After(10 * time.Second):
 			break
 		}
-		
+
 		if !watcher.isWatching {
 			watcher.stop <- true
 			return
@@ -139,13 +139,13 @@ func (watcher *Watcher) processFileChanged(event fsnotify.Event) {
 
 	if isDir { // Is a folder
 		if isAdded {
-			log.Println("Folder Added (" + event.Name + ")")
+			// log.Println("Folder Added (" + event.Name + ")")
 
 			watcher.watcher.Add(event.Name)
 		}
 
 		if isDeleted {
-			log.Println("File Deleted (" + event.Name + ")")
+			// log.Println("File Deleted (" + event.Name + ")")
 
 			watcher.watcher.Remove(event.Name)
 			messagebus.Publish("FOLDER_DELETED", event.Name)
@@ -155,22 +155,25 @@ func (watcher *Watcher) processFileChanged(event fsnotify.Event) {
 		switch {
 		case isAdded:
 			{
-				rel, _ := filepath.Rel(watcher.rootFolder, event.Name)
-				log.Println("File Added (" + rel + ")")
+				// rel, _ := filepath.Rel(watcher.rootFolder, event.Name)
+				// log.Println("File Added (" + rel + ")")
+
 				messagebus.Publish("FILE_ADDED", event.Name)
 			}
 
 		case isDeleted:
 			{
-				rel, _ := filepath.Rel(watcher.rootFolder, event.Name)
-				log.Println("File Deleted (" + rel + ")")
+				// rel, _ := filepath.Rel(watcher.rootFolder, event.Name)
+				// log.Println("File Deleted (" + rel + ")")
+
 				messagebus.Publish("FILE_DELETED", event.Name)
 			}
 
 		default:
 			{
-				rel, _ := filepath.Rel(watcher.rootFolder, event.Name)
-				log.Println("File Changed (" + rel + ")")
+				// rel, _ := filepath.Rel(watcher.rootFolder, event.Name)
+				// log.Println("File Changed (" + rel + ")")
+
 				messagebus.Publish("FILE_CHANGED", event.Name)
 			}
 		}

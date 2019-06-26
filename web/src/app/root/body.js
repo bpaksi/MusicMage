@@ -4,7 +4,7 @@ import { withStateScoped, compose } from "../util";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Header from "./header";
-import Navigation from "./navigation";
+
 import Client from "./client";
 import { Notify, Confirm } from "../util";
 
@@ -21,15 +21,17 @@ class Body extends Component {
   }
 
   render() {
-		const {webSocket} = this.props
+    const { webSocket } = this.props;
 
     return (
       <>
         <CssBaseline />
         <Header />
-        <Navigation />
-        {webSocket.connected && (<Client />)}
-        {!webSocket.connected && (<h2>Connecting ...</h2>)}
+
+        <div style={{ marginLeft: "10px", marginRight: "10px" }}>
+          {webSocket.connected && <Client />}
+          {!webSocket.connected && <h2>Connecting ...</h2>}
+        </div>
         <Confirm />
         <Notify />
       </>

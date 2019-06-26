@@ -5,43 +5,54 @@ import Library from "./library";
 import Artists from "./artists";
 import Album from "./album";
 import Unassigned from "./unassigned";
+import Settings from "./settings";
 
 export const routes = {
-
   library: {
     label: "Library",
-		icon: "library_music",
-		path: "/",
+    icon: "library_music",
+    path: "/",
     // render: ({key}) => <Library key={key} />,
-		router: () => <Route key="Library" exact path="/" component={Library} />
+    router: () => <Route key="Library" exact path="/" component={Library} />
   },
   artists: {
     label: "Artists",
     icon: "people",
-		path: "/artists",
+    path: "/artists",
     // render: ({key}) => <Artists key={key} />,
-		router: () => <Route key="Artists" path="/artists" component={Artists} />,
+    router: () => <Route key="Artists" path="/artists" component={Artists} />,
     menu: true
   },
   album: {
     label: "Album",
     icon: "album",
     // render: ({ key, artist, album }) => <Album key={key} artistName={artist} albumName={album} />
-		router: () => <Route key="Album" path="/album/:artist/:album" component={Album} />
+    router: () => (
+      <Route key="Album" path="/album/:artist/:album" component={Album} />
+    )
+  },
+  settings: {
+    label: "Settings",
+    icon: "settings",
+    path: "/settings",
+    // render: ({ key, artist, album }) => <Album key={key} artistName={artist} albumName={album} />
+    router: () => <Route key="Settings" path="/settings" component={Settings} />
   },
   // albums: {
   //   label: "Albums",
   //   icon: "album",
-	// 	path: "/",
+  // 	path: "/",
   //   // render: ({key}) => <Artists key={key} />,
   //   menu: true
   // },
   unassigned: {
     label: "Unassigned",
     icon: "error_outline",
-		path: "/unassigned",
+    path: "/unassigned",
     // render: ({key}) => <Unassigned key={key}/>,
-		router: () => <Route key="Unassigned" path="/unassigned" component={Unassigned} />,
+    router: () => (
+      <Route key="Unassigned" path="/unassigned" component={Unassigned} />
+    ),
     menu: true
   }
 };

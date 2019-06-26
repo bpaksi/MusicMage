@@ -1,4 +1,4 @@
-package artist
+package command
 
 import (
 	"github.com/bpaksi/MusicMage/server/api/connection"

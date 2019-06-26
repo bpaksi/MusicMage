@@ -1,6 +1,7 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { withState, compose } from "../util";
+import { withRouter } from "react-router";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -9,6 +10,12 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
+
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+
+import LibraryMusic from "@material-ui/icons/LibraryMusic";
+import Settings from "@material-ui/icons/Settings";
 
 const styles = {
   menuButton: {
@@ -30,20 +37,23 @@ class Header extends React.Component {
     this.setState({ anchorEl: null });
   };
 
-  onMenuLibrary = () => {
-    // const { actions } = this.props;
+  onOptionLibrary = () => {
+    const { history } = this.props;
 
-    // actions.navigateBack();
+		// actions.navigateBack();
+		history.push("/")
     this.setState({ anchorEl: null });
   };
 
-  onSettingsOpen = () => {
-    // const { actions } = this.props;
+  onOptionSettings = () => {
+    const { history } = this.props;
 
-    // actions.navigateBack();
+		// actions.navigateBack();
+		history.push("/settings")
     this.setState({ anchorEl: null });
-	};
-	
+
+  };
+
   render() {
     const { classes } = this.props;
     const { anchorEl } = this.state;
@@ -76,8 +86,18 @@ class Header extends React.Component {
             open={open}
             onClose={this.onMenuClose}
           >
-            <MenuItem onClick={this.onMenuLibrary}>Library</MenuItem>
-            <MenuItem onClick={this.onSettings}>Settings</MenuItem>
+            <MenuItem onClick={this.onOptionLibrary}>
+              <ListItemIcon>
+                <LibraryMusic />
+              </ListItemIcon>
+              <ListItemText primary="Library" />
+            </MenuItem>
+            <MenuItem onClick={this.onOptionSettings}>
+              <ListItemIcon>
+                <Settings />
+              </ListItemIcon>
+              <ListItemText primary="Settings" />
+            </MenuItem>
           </Menu>
           <Typography variant="h1" color="inherit">
             Music Mage
@@ -87,7 +107,4 @@ class Header extends React.Component {
     );
   }
 }
-export default compose(
-  withState(),
-  withStyles(styles)
-)(Header);
+export default withStyles(styles)(withRouter(Header));

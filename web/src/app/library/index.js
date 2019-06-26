@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 
 import { withActionsOnly } from "../util";
 
+import Paper from "@material-ui/core/Paper";
+
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -19,41 +21,45 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 import { routes } from "../routes";
 
-const Library = (props) => {
-	// console.log("Library.render()", props)
+import { Navigation, LibraryStep } from "../util/ui/navigation";
 
-	return (
-  <Card>
-    <CardHeader title="Library" />
-    <CardContent>
-      <List>
-        {Object.keys(routes).map(
-          route =>
-            routes[route].menu && (
-              <ListItem key={route}>
-                {routes[route].icon && (
-                  <ListItemAvatar>
-                    <Avatar>
-                      <Icon>{routes[route].icon}</Icon>
-                    </Avatar>
-                  </ListItemAvatar>
-                )}
-                <ListItemText primary={routes[route].label} />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    component={Link}
-                    to={routes[route].path}
-                  >
-                    <ChevronRightIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            )
-        )}
-      </List>
-    </CardContent>
-  </Card>
-)
-								};
+const Library = props => {
+  // console.log("Library.render()", props)
+
+  return (
+    <>
+      <Navigation steps={[LibraryStep]}/>
+      <Paper>
+        <Card>
+          <CardHeader title="Library" />
+          <CardContent>
+            <List>
+              {Object.keys(routes).map(
+                route =>
+                  routes[route].menu && (
+                    <ListItem key={route}>
+                      {routes[route].icon && (
+                        <ListItemAvatar>
+                          <Avatar>
+                            <Icon>{routes[route].icon}</Icon>
+                          </Avatar>
+                        </ListItemAvatar>
+                      )}
+                      <ListItemText primary={routes[route].label} />
+                      <ListItemSecondaryAction>
+                        <IconButton component={Link} to={routes[route].path}>
+                          <ChevronRightIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  )
+              )}
+            </List>
+          </CardContent>
+        </Card>
+      </Paper>
+    </>
+  );
+};
 
 export default withActionsOnly()(Library);
