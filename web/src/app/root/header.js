@@ -1,21 +1,19 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { withState, compose } from "../util";
 import { withRouter } from "react-router";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import Icon from "@material-ui/core/Icon";
 
-import LibraryMusic from "@material-ui/icons/LibraryMusic";
-import Settings from "@material-ui/icons/Settings";
+import { routes } from "../routes";
 
 const styles = {
   menuButton: {
@@ -25,9 +23,7 @@ const styles = {
 };
 
 class Header extends React.Component {
-  state = {
-    anchorEl: null
-  };
+  state = { anchorEl: null };
 
   onMenuOpen = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -40,18 +36,17 @@ class Header extends React.Component {
   onOptionLibrary = () => {
     const { history } = this.props;
 
-		// actions.navigateBack();
-		history.push("/")
+    // actions.navigateBack();
+    history.push(routes.library.path);
     this.setState({ anchorEl: null });
   };
 
   onOptionSettings = () => {
     const { history } = this.props;
 
-		// actions.navigateBack();
-		history.push("/settings")
+    // actions.navigateBack();
+    history.push(routes.settings.path);
     this.setState({ anchorEl: null });
-
   };
 
   render() {
@@ -63,6 +58,7 @@ class Header extends React.Component {
       <AppBar position="static">
         <Toolbar>
           <IconButton
+					size="large"
             className={classes.menuButton}
             color="inherit"
             onClick={this.onMenuOpen}
@@ -70,7 +66,7 @@ class Header extends React.Component {
             aria-owns={open ? "menu-appbar" : null}
             aria-haspopup="true"
           >
-            <MenuIcon />
+            <Icon fontSize="large">menu</Icon>
           </IconButton>
           <Menu
             id="menu-appbar"
@@ -88,13 +84,13 @@ class Header extends React.Component {
           >
             <MenuItem onClick={this.onOptionLibrary}>
               <ListItemIcon>
-                <LibraryMusic />
+                <Icon>{routes.library.icon}</Icon>
               </ListItemIcon>
               <ListItemText primary="Library" />
             </MenuItem>
             <MenuItem onClick={this.onOptionSettings}>
               <ListItemIcon>
-                <Settings />
+                <Icon>{routes.settings.icon}</Icon>
               </ListItemIcon>
               <ListItemText primary="Settings" />
             </MenuItem>

@@ -1,6 +1,3 @@
-import React from "react";
-import { Route } from "react-router-dom";
-
 import Library from "./library";
 import Artists from "./artists";
 import Album from "./album";
@@ -12,49 +9,58 @@ export const routes = {
     label: "Library",
     icon: "library_music",
     path: "/",
-    // render: ({key}) => <Library key={key} />,
-    router: () => <Route key="Library" exact path="/" component={Library} />
+    isExact: true,
+    component: Library,
+    nav: () => ({
+      path: routes.library.path,
+      name: routes.library.label,
+      icon: routes.library.icon
+    })
   },
   artists: {
     label: "Artists",
     icon: "people",
     path: "/artists",
-    // render: ({key}) => <Artists key={key} />,
-    router: () => <Route key="Artists" path="/artists" component={Artists} />,
+    component: Artists,
+    nav: () => ({
+      path: routes.artists.path,
+      name: routes.artists.label,
+      icon: routes.artists.icon
+    }),
     menu: true
   },
   album: {
     label: "Album",
     icon: "album",
-    // render: ({ key, artist, album }) => <Album key={key} artistName={artist} albumName={album} />
-    router: () => (
-      <Route key="Album" path="/album/:artist/:album" component={Album} />
-    )
+    path: "/album/:artist/:album",
+    component: Album,
+    nav: (artist, album) => ({
+      path: "/album/" + artist + "/" + album,
+      name: artist,
+      icon: routes.album.icon
+    })
   },
   settings: {
     label: "Settings",
     icon: "settings",
     path: "/settings",
-    // render: ({ key, artist, album }) => <Album key={key} artistName={artist} albumName={album} />
-    router: () => <Route key="Settings" path="/settings" component={Settings} />
+    component: Settings,
+    nav: () => ({
+      path: routes.settings.path,
+      name: routes.settings.label,
+      icon: routes.settings.icon
+    })
   },
-  // albums: {
-  //   label: "Albums",
-  //   icon: "album",
-  // 	path: "/",
-  //   // render: ({key}) => <Artists key={key} />,
-  //   menu: true
-  // },
   unassigned: {
     label: "Unassigned",
     icon: "error_outline",
     path: "/unassigned",
-    // render: ({key}) => <Unassigned key={key}/>,
-    router: () => (
-      <Route key="Unassigned" path="/unassigned" component={Unassigned} />
-    ),
+		component: Unassigned,
+		nav: () => ({
+      path: routes.unassigned.path,
+      name: routes.unassigned.label,
+      icon: routes.unassigned.icon
+    }),
     menu: true
   }
 };
-
-export default routes;

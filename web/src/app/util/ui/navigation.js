@@ -53,7 +53,7 @@ NavStep.propTypes = {
 
 const NavigationStep = withRouter(NavStep);
 
-class Nav extends React.Component {
+class Navigation extends React.Component {
   render() {
     const { steps, classes } = this.props;
 
@@ -68,7 +68,7 @@ class Nav extends React.Component {
           <NavigationStep
             key={step.name}
             label={step.name}
-            to={step.route}
+            to={step.path}
             icon={step.icon}
             active={idx === activeStep}
             // onClick={() => actions.navigateBack(idx)}
@@ -79,20 +79,8 @@ class Nav extends React.Component {
   }
 }
 
-Nav.propTypes = {
+Navigation.propTypes = {
   steps: PropTypes.array.isRequired
 };
 
-const Navigation = withStyles(styles)(Nav);
-
-const LibraryStep = { route: "/", name: "Library", icon: "library_music" };
-const ArtistsStep = { route: "/artists", name: "Artists", icon: "people" };
-const SettingsStep = { route: "/settings", name: "Settings", icon: "settings" };
-const AlbumStep = (artist, album) => ({
-  route: "/album/" + artist + "/" + album,
-  name: artist,
-  icon: "album"
-});
-
-export default Navigation;
-export { Navigation, LibraryStep, ArtistsStep, AlbumStep, SettingsStep };
+export default withStyles(styles)(Navigation);

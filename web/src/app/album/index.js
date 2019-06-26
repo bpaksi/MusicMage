@@ -21,14 +21,10 @@ import CardContent from "@material-ui/core/CardContent";
 
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
-import MenuItem from '@material-ui/core/MenuItem';
+import MenuItem from "@material-ui/core/MenuItem";
 
-import {
-  Navigation,
-  LibraryStep,
-  ArtistsStep,
-  AlbumStep
-} from "../util/ui/navigation";
+import Navigation from "../util/ui/navigation";
+import { routes } from "../routes";
 
 import AddGenre from "./addGenre";
 
@@ -191,7 +187,7 @@ class Artist extends React.Component {
     return (
       <>
         <Navigation
-          steps={[LibraryStep, ArtistsStep, AlbumStep(artist, album)]}
+          steps={[routes.library.nav(), routes.artists.nav, routes.album.nav(artist, album)]}
         />
         <Paper>
           <Card className={classes.card}>

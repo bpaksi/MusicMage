@@ -21,7 +21,8 @@ import Avatar from "@material-ui/core/Avatar";
 import PersonIcon from "@material-ui/icons/Person";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
-import { Navigation, LibraryStep, ArtistsStep } from "../util/ui/navigation";
+import Navigation from "../util/ui/navigation";
+import { routes } from "../routes";
 
 
 const styles = theme => ({
@@ -49,7 +50,7 @@ class Artists extends React.Component {
 
     return (
       <>
-        <Navigation steps={[LibraryStep, ArtistsStep]}/>
+        <Navigation steps={[routes.library.nav(), routes.artists.nav]}/>
         <Paper>
           <Card className={classes.card}>
             <CardHeader title="Artists" />

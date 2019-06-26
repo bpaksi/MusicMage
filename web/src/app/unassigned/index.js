@@ -4,34 +4,35 @@ import { withStyles } from "@material-ui/core/styles";
 import {
   withStateScoped,
   compose,
-  TableEx,
+  TableEx
   // SelectWithChanges,
   // TextFieldWithChanges
 } from "../util";
 
-import Button from "@material-ui/core/Button";
-// import MenuItem from "@material-ui/core/MenuItem";
-// import TextField from "@material-ui/core/TextField";
-// import Card from "@material-ui/core/Card";
-// import CardHeader from "@material-ui/core/CardHeader";
-// import CardActions from "@material-ui/core/CardActions";
-// import CardContent from "@material-ui/core/CardContent";
-// import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
+
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardContent from "@material-ui/core/CardContent";
+
+import IconButton from "@material-ui/core/IconButton";
+import SearchIcon from "@material-ui/icons/Search";
+
+import Navigation from "../util/ui/navigation";
+import { routes } from "../routes";
 
 import Search from "./search";
 
 const styles = theme => ({
   root: {
-    ...theme.mixins.gutters(),
+    ...theme.mixins.gutters()
     // paddingTop: theme.spacing.unit * 2,
     // paddingBottom: theme.spacing.unit * 2
   }
 });
 
 class Unassigned extends React.Component {
-  state = {searchOpen: false};
+  state = { searchOpen: false };
 
   componentDidMount() {
     const { actions } = this.props;
@@ -45,10 +46,10 @@ class Unassigned extends React.Component {
   }
 
   onSearch = () => {
-    this.setState({searchOpen: true});
+    this.setState({ searchOpen: true });
   };
   onSearchClose = () => {
-    this.setState({searchOpen: false});
+    this.setState({ searchOpen: false });
   };
 
   render() {
@@ -58,39 +59,46 @@ class Unassigned extends React.Component {
     console.log("Unassigned - render", unassigned);
 
     const columns = [
-      { id: "id", label: "id", render: ({ id }) => id },
-      { id: "fullpath", label: "fullpath", render: ({ fullpath }) => fullpath },
+      { id: "fullpath", label: "Path", render: ({ fullpath }) => fullpath },
       {
         id: "suggestedArtist",
-        label: "suggestedArtist",
+        label: "Suggested Artist",
         render: ({ suggestedArtist }) => suggestedArtist
       },
       {
         id: "suggestedAlbum",
-        label: "suggestedAlbum",
+        label: "Suggested Album",
         render: ({ suggestedAlbum }) => suggestedAlbum
       },
       {
         id: "suggestedTitle",
-        label: "suggestedTitle",
+        label: "Suggested Title",
         render: ({ suggestedTitle }) => suggestedTitle
       },
       { id: "album", label: "Album", render: ({ album }) => album },
-      { id: "artist", label: "artist", render: ({ artist }) => artist },
-      { id: "title", label: "title", render: ({ title }) => title }
+      { id: "artist", label: "Artist", render: ({ artist }) => artist },
+      { id: "title", label: "Title", render: ({ title }) => title }
     ];
 
     return (
       <>
-        <Toolbar>
-          <Typography variant="h6" color="inherit">
-            Unassigned
-          </Typography>
-          <Button onClick={this.onSearch}>Search</Button>
-        </Toolbar>
-
-        <TableEx data={unassigned} columns={columns} />
-
+        <Navigation steps={[routes.library.nav(), routes.unassigned.nav()]} />
+        <Paper>
+          <Card>
+            <CardHeader
+              action={
+                <IconButton aria-label="Search" onClick={this.onSearch}>
+                  <SearchIcon />
+                </IconButton>
+              }
+              title="Unassigned"
+              // subheader="September 14, 2016"
+            />
+            <CardContent>
+              <TableEx data={unassigned} columns={columns} />
+            </CardContent>
+          </Card>
+        </Paper>
         <Search open={searchOpen} onClose={this.onSearchClose} />
       </>
     );

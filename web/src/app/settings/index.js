@@ -7,7 +7,8 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 
-import { Navigation, LibraryStep, SettingsStep } from "../util/ui/navigation";
+import Navigation from "../util/ui/navigation";
+import { routes } from "../routes";
 
 const styles = theme => ({
   root: {
@@ -23,7 +24,7 @@ class Settings extends React.Component {
 
     return (
       <>
-        <Navigation steps={[LibraryStep, SettingsStep]}/>
+        <Navigation steps={[routes.library.nav(), routes.settings.nav()]}/>
         <Paper>
           <Card className={classes.card}>
             <CardHeader title="Settings" />

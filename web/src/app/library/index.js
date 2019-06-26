@@ -19,41 +19,39 @@ import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
+import Navigation from "../util/ui/navigation";
 import { routes } from "../routes";
-
-import { Navigation, LibraryStep } from "../util/ui/navigation";
 
 const Library = props => {
   // console.log("Library.render()", props)
 
   return (
     <>
-      <Navigation steps={[LibraryStep]}/>
+      <Navigation steps={[routes.library.nav()]} />
       <Paper>
         <Card>
           <CardHeader title="Library" />
           <CardContent>
             <List>
-              {Object.keys(routes).map(
-                route =>
-                  routes[route].menu && (
-                    <ListItem key={route}>
-                      {routes[route].icon && (
-                        <ListItemAvatar>
-                          <Avatar>
-                            <Icon>{routes[route].icon}</Icon>
-                          </Avatar>
-                        </ListItemAvatar>
-                      )}
-                      <ListItemText primary={routes[route].label} />
-                      <ListItemSecondaryAction>
-                        <IconButton component={Link} to={routes[route].path}>
-                          <ChevronRightIcon />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  )
-              )}
+              {Object.keys(routes)
+                .filter(route => routes[route].menu)
+                .map(route => (
+                  <ListItem key={route}>
+                    {routes[route].icon && (
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon>{routes[route].icon}</Icon>
+                        </Avatar>
+                      </ListItemAvatar>
+                    )}
+                    <ListItemText primary={routes[route].label} />
+                    <ListItemSecondaryAction>
+                      <IconButton component={Link} to={routes[route].path}>
+                        <ChevronRightIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
             </List>
           </CardContent>
         </Card>
