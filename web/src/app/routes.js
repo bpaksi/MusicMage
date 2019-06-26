@@ -2,7 +2,6 @@ import Library from "./library";
 import Artists from "./artists";
 import Album from "./album";
 import Unassigned from "./unassigned";
-import Settings from "./settings";
 
 export const routes = {
   library: {
@@ -38,17 +37,6 @@ export const routes = {
       path: "/album/" + artist + "/" + album,
       name: artist,
       icon: routes.album.icon
-    })
-  },
-  settings: {
-    label: "Settings",
-    icon: "settings",
-    path: "/settings",
-    component: Settings,
-    nav: () => ({
-      path: routes.settings.path,
-      name: routes.settings.label,
-      icon: routes.settings.icon
     })
   },
   unassigned: {

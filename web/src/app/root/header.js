@@ -14,6 +14,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Icon from "@material-ui/core/Icon";
 
 import { routes } from "../routes";
+import Settings from "./settings";
 
 const styles = {
   menuButton: {
@@ -23,7 +24,7 @@ const styles = {
 };
 
 class Header extends React.Component {
-  state = { anchorEl: null };
+  state = { anchorEl: null, showSetting: false };
 
   onMenuOpen = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -42,23 +43,21 @@ class Header extends React.Component {
   };
 
   onOptionSettings = () => {
-    const { history } = this.props;
-
-    // actions.navigateBack();
-    history.push(routes.settings.path);
-    this.setState({ anchorEl: null });
+    this.setState({ anchorEl: null, showSetting: true });
+  };
+  onOptionSettingsClose = () => {
+    this.setState({ showSetting: false });
   };
 
   render() {
     const { classes } = this.props;
-    const { anchorEl } = this.state;
+    const { anchorEl, showSetting } = this.state;
     const open = Boolean(anchorEl);
 
     return (
       <AppBar position="static">
         <Toolbar>
           <IconButton
-					size="large"
             className={classes.menuButton}
             color="inherit"
             onClick={this.onMenuOpen}
@@ -90,7 +89,7 @@ class Header extends React.Component {
             </MenuItem>
             <MenuItem onClick={this.onOptionSettings}>
               <ListItemIcon>
-                <Icon>{routes.settings.icon}</Icon>
+                <Icon>settings</Icon>
               </ListItemIcon>
               <ListItemText primary="Settings" />
             </MenuItem>
@@ -99,6 +98,7 @@ class Header extends React.Component {
             Music Mage
           </Typography>
         </Toolbar>
+        <Settings open={showSetting} onClose={this.onOptionSettingsClose} />
       </AppBar>
     );
   }

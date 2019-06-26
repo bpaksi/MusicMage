@@ -1,14 +1,42 @@
 import React, { Component } from "react";
-import { withStyles } from "@material-ui/core/styles";
-import { withStateScoped, compose } from "../util";
+import { withStateScoped } from "../util";
 
+import Typography from "@material-ui/core/Typography";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import CssBaseline from "@material-ui/core/CssBaseline";
+
+import { Route } from "react-router-dom";
+import { routes } from "../routes";
+
 import Header from "./header";
 
-import Client from "./client";
 import { Notify, Confirm } from "../util";
 
-const styles = theme => ({});
+const Routes = () => (
+  <>
+    {Object.keys(routes)
+      .filter(k => routes[k].path !== "")
+      .map(k => {
+        const route = routes[k];
+        return (
+          <Route
+            key={k}
+            exact={route.isExact}
+            path={route.path}
+            component={route.component}
+          />
+        );
+      })}
+  </>
+);
+
+const NotConnected = () => (
+  <div style={{ margin: "10px", width: "400px" }}>
+    <Typography variant="h4">Attempting to connect to webserver ...</Typography>
+
+    <LinearProgress color="primary" />
+  </div>
+);
 
 class Body extends Component {
   componentDidMount() {
@@ -27,10 +55,9 @@ class Body extends Component {
       <>
         <CssBaseline />
         <Header />
-
         <div style={{ marginLeft: "10px", marginRight: "10px" }}>
-          {webSocket.connected && <Client />}
-          {!webSocket.connected && <h2>Connecting ...</h2>}
+          {webSocket.connected && <Routes />}
+          {!webSocket.connected && <NotConnected />}
         </div>
         <Confirm />
         <Notify />
@@ -38,7 +65,5 @@ class Body extends Component {
     );
   }
 }
-export default compose(
-  withStateScoped("webSocket"),
-  withStyles(styles)
-)(Body);
+
+export default withStateScoped("webSocket")(Body);
