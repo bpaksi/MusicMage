@@ -1,16 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/bpaksi/MusicMage/server/tools/logger"
-
 	"github.com/bpaksi/MusicMage/server/api"
 	"github.com/bpaksi/MusicMage/server/services/database"
+
+	// allow commands to register themselves
+	_ "github.com/bpaksi/MusicMage/server/services/commands/album"
+	_ "github.com/bpaksi/MusicMage/server/services/commands/artist"
+	_ "github.com/bpaksi/MusicMage/server/services/commands/genres"
+	_ "github.com/bpaksi/MusicMage/server/services/commands/unassigned"
 )
 
 func main() {
@@ -20,13 +25,14 @@ func main() {
 		}
 	}()
 
-	logger.Init()
+	port := 4000
 
 	database.StartDatabase()
 	api.StartAPI()
 	startStaticFileServer()
 
-	http.ListenAndServe("localhost:4000", nil)
+	fmt.Println("Listening on port", port)
+	http.ListenAndServe(fmt.Sprintf("localhost:%d", port), nil)
 
 	// var stop = make(chan os.Signal)
 	// startGracefulShutdown(stop)
