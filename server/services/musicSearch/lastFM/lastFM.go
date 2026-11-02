@@ -9,7 +9,8 @@ import (
 
 // API ...
 type API struct {
-	API *lastfm.Api
+	API    *lastfm.Api
+	APIKey string
 }
 
 // Login creates a Last.fm client using LASTFM_API_KEY and LASTFM_API_SECRET.
@@ -19,7 +20,7 @@ func Login() (api *API, err error) {
 		return nil, err
 	}
 
-	api = &API{}
+	api = &API{APIKey: apiKey}
 	api.API = lastfm.New(apiKey, apiSecret)
 
 	return
