@@ -6,14 +6,12 @@ import (
 	"context"
 	"log"
 
+	"github.com/bpaksi/MusicMage/server/config"
 	"golang.org/x/oauth2"
 
 	"github.com/zmb3/spotify"
 	"golang.org/x/oauth2/clientcredentials"
 )
-
-const clientID = "936439a9c5344f10a9d19f1dae1d8994"
-const clientSecret = "e3b355dec67d488481435a01bb95804c"
 
 // API ...
 type API struct {
@@ -21,8 +19,13 @@ type API struct {
 	client spotify.Client
 }
 
-// Login ...
+// Login creates a Spotify client using SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET.
 func Login() (api *API, err error) {
+	clientID, clientSecret, err := config.Credentials("SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET")
+	if err != nil {
+		return nil, err
+	}
+
 	api = &API{}
 
 	config := &clientcredentials.Config{

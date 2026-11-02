@@ -15,7 +15,7 @@ func (api *API) SearchForTracks(artist, album, id string) (results []*data.Track
 		"mbid":   id,
 
 		"autocorrect": 1,
-		"api_key":     apiKey}
+		"api_key":     api.APIKey}
 
 	result, e := api.API.Album.GetInfo(p)
 	if e != nil {
@@ -30,7 +30,7 @@ func (api *API) SearchForTracks(artist, album, id string) (results []*data.Track
 			"track":       track.Name,
 			"mbid":        track.Mbid,
 			"autocorrect": 1,
-			"api_key":     apiKey}
+			"api_key":     api.APIKey}
 
 		trackInfo, e2 := api.API.Track.GetInfo(p2)
 		if e2 != nil {

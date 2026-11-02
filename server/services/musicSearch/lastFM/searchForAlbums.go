@@ -10,7 +10,7 @@ func (api *API) SearchForAlbums(artist string) (results []data.AlbumRecord, err 
 	p := lastfm.P{
 		"artist":      artist,
 		"autocorrect": 1,
-		"api_key":     apiKey}
+		"api_key":     api.APIKey}
 	result, e := api.API.Artist.GetTopAlbums(p)
 	if e != nil {
 		err = e

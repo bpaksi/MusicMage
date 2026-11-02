@@ -18,3 +18,7 @@
 # vendor/
 
 web/node_modules
+
+# Environment files (keep the example)
+.env*
+!.env.example
