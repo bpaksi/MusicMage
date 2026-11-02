@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/bpaksi/MusicMage/server/api"
+	"github.com/bpaksi/MusicMage/server/config"
 	"github.com/bpaksi/MusicMage/server/services/database"
 
 	// allow commands to register themselves
@@ -24,6 +25,8 @@ func main() {
 			log.Printf("ERROR: %v", r)
 		}
 	}()
+
+	config.Load()
 
 	port := 4000
 

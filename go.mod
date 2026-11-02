@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/gorilla/websocket v1.5.0
+	github.com/joho/godotenv v1.5.1
 	github.com/mikkyang/id3-go v0.0.0-20191012064224-2c6ab3bb1fbd
 	github.com/shkh/lastfm-go v0.0.0-20191215035245-89a801c244e0
 	github.com/zmb3/spotify v1.3.0

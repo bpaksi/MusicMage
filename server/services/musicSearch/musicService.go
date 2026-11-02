@@ -15,10 +15,14 @@ type MusicSearch struct {
 }
 
 // Create ...
-func Create() (musicSearch *MusicSearch) {
+func Create() (musicSearch *MusicSearch, err error) {
 	musicSearch = &MusicSearch{}
-	musicSearch.lastFM = lastFM.Login()
-	musicSearch.spotify, _ = spotify.Login()
+	if musicSearch.lastFM, err = lastFM.Login(); err != nil {
+		return nil, err
+	}
+	if musicSearch.spotify, err = spotify.Login(); err != nil {
+		return nil, err
+	}
 
 	return
 }
